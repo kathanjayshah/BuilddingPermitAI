@@ -75,12 +75,14 @@ function PermitDocumentTopbar({ permitId }: { permitId: string }) {
     router.replace(
       `/permits/${encodeURIComponent(permitId)}?${params.toString()}`,
     );
-  }, [permit, documents, selectedDocId, permitId, router, searchParams]);
+    // searchParams intentionally omitted: only react when selection or docs change
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- avoid replace loops
+  }, [permit, documents, selectedDocId, permitId, router]);
 
-  function selectDocument(documentId: string) {
+  function selectDocument(nextDocumentId: string) {
+    if (!nextDocumentId || nextDocumentId === selectedDocId) return;
     const params = new URLSearchParams(searchParams.toString());
-    if (documentId) params.set("documentId", documentId);
-    else params.delete("documentId");
+    params.set("documentId", nextDocumentId);
     router.replace(
       `/permits/${encodeURIComponent(permitId)}?${params.toString()}`,
     );

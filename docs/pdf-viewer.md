@@ -9,6 +9,7 @@ There is no separate "PDF viewer" nav item. Upload stays on `/permits` only.
 - Top bar title is the **file name**
 - Outer layout height is fixed so the page chrome stays put
 - All PDF pages render in one column inside a **scrollable** pane (no Prev/Next)
+- A sticky viewer header shows **Page X of Y** and updates as you scroll
 - Drag on a page to create a highlight; notes list in the right sidebar
 - Page width follows the pane via `ResizeObserver`
 

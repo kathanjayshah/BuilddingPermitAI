@@ -68,90 +68,13 @@ function toPercentRect(
 }
 
 export function PermitPdfViewer({ documentId }: Props) {
-  const [pageCount, setPageCount] = useState(0);
   const [note, setNote] = useState("Issue to review");
-  const [drag, setDrag] = useState<DragState | null>(null);
-  const [pageWidth, setPageWidth] = useState(640);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const pageEls = useRef<Map<number, HTMLDivElement>>(new Map());
-  const pdfOptions = usePdfDocumentOptions();
-
   const fileUrlQuery = useDocumentFileUrl(documentId, Boolean(documentId));
   const highlightsQuery = useHighlights(documentId, Boolean(documentId));
   const createHighlight = useCreateHighlight(documentId);
   const deleteHighlight = useDeleteHighlight(documentId);
-
   const highlights = highlightsQuery.data ?? [];
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const update = () => {
-      // Leave room for padding inside the scroll pane.
-      setPageWidth(Math.max(280, Math.min(760, el.clientWidth - 24)));
-    };
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [documentId, fileUrlQuery.data]);
-
-  function onPointerDown(
-    page: number,
-    event: React.PointerEvent<HTMLDivElement>,
-  ) {
-    const target = pageEls.current.get(page);
-    if (!target) return;
-    const rect = target.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    setDrag({ page, startX: x, startY: y, currentX: x, currentY: y });
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }
-
-  function onPointerMove(
-    page: number,
-    event: React.PointerEvent<HTMLDivElement>,
-  ) {
-    if (!drag || drag.page !== page) return;
-    const target = pageEls.current.get(page);
-    if (!target) return;
-    const rect = target.getBoundingClientRect();
-    setDrag({
-      ...drag,
-      currentX: event.clientX - rect.left,
-      currentY: event.clientY - rect.top,
-    });
-  }
-
-  async function onPointerUp(page: number) {
-    if (!drag || drag.page !== page || !documentId) {
-      setDrag(null);
-      return;
-    }
-    const target = pageEls.current.get(page);
-    if (!target) {
-      setDrag(null);
-      return;
-    }
-    const rect = target.getBoundingClientRect();
-    const box = toPercentRect(
-      drag.startX,
-      drag.startY,
-      drag.currentX,
-      drag.currentY,
-      rect.width,
-      rect.height,
-    );
-    setDrag(null);
-    if (box.width < 1 || box.height < 1) return;
-    await createHighlight.mutateAsync({
-      page: drag.page,
-      ...box,
-      note,
-      color: "#facc15",
-    });
-  }
+  const pdfOptions = usePdfDocumentOptions();
 
   if (!documentId) {
     return (
@@ -177,83 +100,19 @@ export function PermitPdfViewer({ documentId }: Props) {
     );
   }
 
-  const draftEl = drag ? pageEls.current.get(drag.page) : null;
-  const draft =
-    drag && draftEl
-      ? toPercentRect(
-          drag.startX,
-          drag.startY,
-          drag.currentX,
-          drag.currentY,
-          draftEl.getBoundingClientRect().width,
-          draftEl.getBoundingClientRect().height,
-        )
-      : null;
-
   return (
     <div className="grid h-full min-h-0 gap-3 sm:grid-cols-[minmax(0,1fr)_220px]">
-      <div className="flex min-h-0 min-w-0 flex-col rounded-lg border bg-muted/20">
-        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto p-3">
-          <Document
-            file={fileUrlQuery.data}
-            options={pdfOptions}
-            loading={
-              <p className="p-6 text-sm text-muted-foreground">Rendering...</p>
-            }
-            error={
-              <p className="p-6 text-sm text-destructive">
-                Could not render this PDF. Try uploading it again.
-              </p>
-            }
-            onLoadSuccess={(pdf) => setPageCount(pdf.numPages)}
-          >
-            <div className="mx-auto flex w-fit flex-col gap-4">
-              {Array.from({ length: pageCount }, (_, i) => {
-                const page = i + 1;
-                const pageHighlights = highlights.filter((h) => h.page === page);
-                return (
-                  <div key={page} className="space-y-1">
-                    <p className="text-center text-[11px] text-muted-foreground">
-                      Page {page}
-                    </p>
-                    <div
-                      ref={(node) => {
-                        if (node) pageEls.current.set(page, node);
-                        else pageEls.current.delete(page);
-                      }}
-                      className="relative w-fit touch-none select-none shadow-sm"
-                      onPointerDown={(e) => onPointerDown(page, e)}
-                      onPointerMove={(e) => onPointerMove(page, e)}
-                      onPointerUp={() => void onPointerUp(page)}
-                    >
-                      <Page
-                        pageNumber={page}
-                        width={pageWidth}
-                        renderTextLayer
-                        renderAnnotationLayer
-                      />
-                      {pageHighlights.map((h) => (
-                        <HighlightBox key={h.id} highlight={h} />
-                      ))}
-                      {draft && drag?.page === page ? (
-                        <div
-                          className="pointer-events-none absolute border-2 border-amber-500 bg-amber-300/40"
-                          style={{
-                            left: `${draft.x}%`,
-                            top: `${draft.y}%`,
-                            width: `${draft.width}%`,
-                            height: `${draft.height}%`,
-                          }}
-                        />
-                      ) : null}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Document>
-        </div>
-      </div>
+      <PdfScrollPane
+        key={documentId}
+        documentId={documentId}
+        fileUrl={fileUrlQuery.data}
+        pdfOptions={pdfOptions}
+        note={note}
+        highlights={highlights}
+        onCreateHighlight={async (payload) => {
+          await createHighlight.mutateAsync(payload);
+        }}
+      />
 
       <aside className="flex min-h-0 flex-col gap-3 overflow-y-auto sm:border-l sm:pl-3">
         <div className="space-y-2">
@@ -296,6 +155,243 @@ export function PermitPdfViewer({ documentId }: Props) {
           )}
         </div>
       </aside>
+    </div>
+  );
+}
+
+type CreateHighlightPayload = {
+  page: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  note: string;
+  color: string;
+};
+
+type PdfDocumentOptions = {
+  wasmUrl: string;
+  cMapUrl: string;
+  cMapPacked: boolean;
+  standardFontDataUrl: string;
+  iccUrl: string;
+  disableRange: boolean;
+  disableStream: boolean;
+};
+
+type PdfScrollPaneProps = {
+  documentId: string;
+  fileUrl: string;
+  pdfOptions: PdfDocumentOptions;
+  note: string;
+  highlights: PdfHighlight[];
+  onCreateHighlight: (payload: CreateHighlightPayload) => Promise<void>;
+};
+
+function PdfScrollPane({
+  documentId,
+  fileUrl,
+  pdfOptions,
+  note,
+  highlights,
+  onCreateHighlight,
+}: PdfScrollPaneProps) {
+  const [pageCount, setPageCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [drag, setDrag] = useState<DragState | null>(null);
+  const [pageWidth, setPageWidth] = useState(640);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const pageEls = useRef<Map<number, HTMLDivElement>>(new Map());
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const update = () => {
+      setPageWidth(Math.max(280, Math.min(760, el.clientWidth - 24)));
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [fileUrl]);
+
+  useEffect(() => {
+    const scroller = scrollRef.current;
+    if (!scroller || pageCount === 0) return;
+
+    function updateCurrentPage() {
+      if (!scroller) return;
+      const scrollerRect = scroller.getBoundingClientRect();
+      const marker = scrollerRect.top + scrollerRect.height / 3;
+      let bestPage = 1;
+      let bestDistance = Number.POSITIVE_INFINITY;
+
+      for (let page = 1; page <= pageCount; page += 1) {
+        const node = pageEls.current.get(page);
+        if (!node) continue;
+        const rect = node.getBoundingClientRect();
+        const mid = rect.top + rect.height / 2;
+        const distance = Math.abs(mid - marker);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          bestPage = page;
+        }
+      }
+      setCurrentPage((prev) => (prev === bestPage ? prev : bestPage));
+    }
+
+    updateCurrentPage();
+    scroller.addEventListener("scroll", updateCurrentPage, { passive: true });
+    return () => scroller.removeEventListener("scroll", updateCurrentPage);
+  }, [pageCount, pageWidth]);
+
+  function onPointerDown(
+    page: number,
+    event: React.PointerEvent<HTMLDivElement>,
+  ) {
+    const target = pageEls.current.get(page);
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    setDrag({ page, startX: x, startY: y, currentX: x, currentY: y });
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function onPointerMove(
+    page: number,
+    event: React.PointerEvent<HTMLDivElement>,
+  ) {
+    if (!drag || drag.page !== page) return;
+    const target = pageEls.current.get(page);
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    setDrag({
+      ...drag,
+      currentX: event.clientX - rect.left,
+      currentY: event.clientY - rect.top,
+    });
+  }
+
+  async function onPointerUp(page: number) {
+    if (!drag || drag.page !== page) {
+      setDrag(null);
+      return;
+    }
+    const target = pageEls.current.get(page);
+    if (!target) {
+      setDrag(null);
+      return;
+    }
+    const rect = target.getBoundingClientRect();
+    const box = toPercentRect(
+      drag.startX,
+      drag.startY,
+      drag.currentX,
+      drag.currentY,
+      rect.width,
+      rect.height,
+    );
+    setDrag(null);
+    if (box.width < 1 || box.height < 1) return;
+    await onCreateHighlight({
+      page: drag.page,
+      ...box,
+      note,
+      color: "#facc15",
+    });
+  }
+
+  const draftEl = drag ? pageEls.current.get(drag.page) : null;
+  const draft =
+    drag && draftEl
+      ? toPercentRect(
+          drag.startX,
+          drag.startY,
+          drag.currentX,
+          drag.currentY,
+          draftEl.getBoundingClientRect().width,
+          draftEl.getBoundingClientRect().height,
+        )
+      : null;
+
+  return (
+    <div className="flex min-h-0 min-w-0 flex-col rounded-lg border bg-muted/20">
+      <div className="flex shrink-0 items-center border-b bg-background/95 px-3 py-2 text-xs backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <span className="font-medium text-foreground">
+          {loadError
+            ? "Could not load PDF"
+            : pageCount > 0
+              ? `Page ${currentPage} of ${pageCount}`
+              : "Loading pages..."}
+        </span>
+      </div>
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto p-3">
+        <Document
+          key={`${documentId}:${fileUrl}`}
+          file={fileUrl}
+          options={pdfOptions}
+          loading={
+            <p className="p-6 text-sm text-muted-foreground">Rendering...</p>
+          }
+          error={
+            <p className="p-6 text-sm text-destructive">
+              Could not render this PDF. Try uploading it again.
+            </p>
+          }
+          onLoadSuccess={(pdf) => {
+            setLoadError(null);
+            setPageCount(pdf.numPages);
+            setCurrentPage(1);
+          }}
+          onLoadError={(error) => {
+            setLoadError(error.message || "PDF load failed");
+            setPageCount(0);
+          }}
+        >
+          <div className="mx-auto flex w-fit flex-col gap-4">
+            {Array.from({ length: pageCount }, (_, i) => {
+              const page = i + 1;
+              const pageHighlights = highlights.filter((h) => h.page === page);
+              return (
+                <div
+                  key={page}
+                  ref={(node) => {
+                    if (node) pageEls.current.set(page, node);
+                    else pageEls.current.delete(page);
+                  }}
+                  className="relative w-fit touch-none select-none shadow-sm"
+                  onPointerDown={(e) => onPointerDown(page, e)}
+                  onPointerMove={(e) => onPointerMove(page, e)}
+                  onPointerUp={() => void onPointerUp(page)}
+                >
+                  <Page
+                    pageNumber={page}
+                    width={pageWidth}
+                    renderTextLayer
+                    renderAnnotationLayer
+                  />
+                  {pageHighlights.map((h) => (
+                    <HighlightBox key={h.id} highlight={h} />
+                  ))}
+                  {draft && drag?.page === page ? (
+                    <div
+                      className="pointer-events-none absolute border-2 border-amber-500 bg-amber-300/40"
+                      style={{
+                        left: `${draft.x}%`,
+                        top: `${draft.y}%`,
+                        width: `${draft.width}%`,
+                        height: `${draft.height}%`,
+                      }}
+                    />
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        </Document>
+      </div>
     </div>
   );
 }
