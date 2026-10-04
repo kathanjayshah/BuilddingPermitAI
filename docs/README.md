@@ -13,7 +13,9 @@ All project writing lives in this folder. The root `README.md` is only a short q
 | [api.md](./api.md)                           | HTTP endpoints                                                  |
 | [storage.md](./storage.md)                   | LocalStack / S3, PDF proxy, env vars                            |
 | [pdf-viewer.md](./pdf-viewer.md)             | react-pdf, WASM assets, scrollable viewer, highlights           |
-| [ai-architecture.md](./ai-architecture.md)   | PDF extract + prompt packing first; pgvector RAG later          |
+| [ai-architecture.md](./ai-architecture.md)   | AI review design: glossary, providers, local then AWS, RAG later |
+| [ai-test-plan.md](./ai-test-plan.md)         | Checklist to test stub / local AI / Textract+Bedrock / RAG      |
+| [plans/](./plans/README.md)                  | Saved plans for later review (AI local-first AWS-ready, …)      |
 | [prisma.md](./prisma.md)                     | Prisma ORM workflow, client, sequential migrations              |
 | [database.md](./database.md)                 | Schema overview, ERD, migrate commands                          |
 | [docker-and-local.md](./docker-and-local.md) | Colima, Compose (Postgres + LocalStack), env, run instructions  |

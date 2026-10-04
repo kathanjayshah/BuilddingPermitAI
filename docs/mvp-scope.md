@@ -16,13 +16,15 @@
 - Compose LocalStack S3 on host port `4566` (bucket `bpa-permits`)
 - Prisma schema + migrations under `prisma/` applied with `npm run db:migrate`
 - Docs under `docs/` (storage, frontend, API, PDF viewer, Colima/local, deployment)
+- AI review **design docs and plan** (local-first then AWS); no live LLM yet. See [ai-architecture.md](./ai-architecture.md) and [plans/ai-local-first-aws-ready.md](./plans/ai-local-first-aws-ready.md)
 
 ## Excluded
 
 - Real auth provider (OAuth, magic links, SSO)
 - Wiring the app to durable Postgres reads/writes
-- Real PDF text extraction / OCR
-- Embeddings and retrieval-augmented generation
+- Real PDF text extraction / OCR (designed; not coded)
+- Amazon Textract / Bedrock wiring (Phase B; designed only)
+- Embeddings and retrieval-augmented generation (Phase C)
 - Crawling municipal websites for norms
 - Redis, job queues, billing, teams/orgs
 - Production hardening (rate limits, virus scanning uploads, etc.)

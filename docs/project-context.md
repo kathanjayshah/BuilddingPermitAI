@@ -33,6 +33,8 @@ Build a personal Building Permit App where a user can:
 | Frontend data    | TanStack Query + `src/services/*`                   | Easy, typed fetches per endpoint                          |
 | Database         | One Postgres instance with pgvector extension       | Keep vectors in the same DB when RAG is needed            |
 | AI path          | Extract + pack norms into prompt first              | Avoid RAG complexity until corpora outgrow context        |
+| AI providers     | Local-first, then Textract + Bedrock behind interfaces | Same pipeline; swap env later without rewrite           |
+| AI design docs   | [ai-architecture.md](./ai-architecture.md), [plans/](./plans/README.md) | Review Bedrock / Textract / RAG / gaps anytime |
 
 ## Product spelling note
 
