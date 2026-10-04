@@ -8,7 +8,9 @@ import {
   listPermits,
 } from "@/lib/mock/store";
 import { detectDocumentKind, titleFromFileName } from "@/lib/documents";
+import { isPermitType } from "@/lib/permit-types";
 import { uploadDocumentObject } from "@/lib/storage/s3";
+import type { PermitType } from "@/lib/types";
 
 export async function GET() {
   const email = await getSessionEmail();
@@ -30,6 +32,7 @@ export async function POST(request: Request) {
   const form = await request.formData();
   const file = form.get("file");
   const titleInput = form.get("title");
+  const typeInput = form.get("type");
 
   if (!(file instanceof File)) {
     return NextResponse.json(
@@ -50,15 +53,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "File is empty." }, { status: 400 });
   }
 
+  const title =
+    typeof titleInput === "string" ? titleInput.trim() : "";
+  if (!title) {
+    return NextResponse.json(
+      { error: "Permit title is required." },
+      { status: 400 },
+    );
+  }
+
+  const typeRaw = typeof typeInput === "string" ? typeInput.trim() : "other";
+  if (!isPermitType(typeRaw)) {
+    return NextResponse.json(
+      { error: "Invalid permit type." },
+      { status: 400 },
+    );
+  }
+  const type: PermitType = typeRaw;
+
   const permitId = createId("permit");
   const documentId = createId("doc");
   const mimeType =
     file.type || (kind === "pdf" ? "application/pdf" : "application/octet-stream");
   const bytes = Buffer.from(await file.arrayBuffer());
   const storageKey = `permits/${email}/${permitId}/${documentId}/${file.name}`;
-  const title =
-    (typeof titleInput === "string" && titleInput.trim()) ||
-    titleFromFileName(file.name);
 
   try {
     const uploaded = await uploadDocumentObject({
@@ -71,7 +89,8 @@ export async function POST(request: Request) {
     const permit = addPermit({
       id: permitId,
       email,
-      title,
+      title: title || titleFromFileName(file.name),
+      type,
       createdAt: new Date().toISOString(),
     });
 

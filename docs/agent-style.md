@@ -14,6 +14,7 @@ This guide is editor-neutral. It lives in `docs/`, not in a vendor folder.
 - Keep paragraphs short. Prefer lists for steps.
 - Tell the user what to do. Do not add filler.
 - Keep technical names as they are: file paths, APIs, code, env vars, commit subjects, product names.
+- Never use an em dash (`—`) anywhere: chat replies, docs, UI strings, or comments. Prefer a hyphen (`-`), a colon, or a new sentence.
 
 ## Do not change
 

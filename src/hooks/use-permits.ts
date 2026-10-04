@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
 import { documentsService, permitsService } from "@/services/permits-service";
+import type { PermitType } from "@/lib/types";
 
 export function usePermits(enabled: boolean) {
   return useQuery({
@@ -16,7 +17,15 @@ export function usePermits(enabled: boolean) {
 export function useUploadPermit() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (file: File) => permitsService.upload(file),
+    mutationFn: ({
+      file,
+      title,
+      type,
+    }: {
+      file: File;
+      title: string;
+      type: PermitType;
+    }) => permitsService.upload(file, title, type),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.permits });
     },

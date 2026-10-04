@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { PermitPdfPage } from "@/components/pages/permit-pdf-page";
 
 type Props = {
@@ -6,5 +7,15 @@ type Props = {
 
 export default async function Page({ params }: Props) {
   const { id } = await params;
-  return <PermitPdfPage permitId={decodeURIComponent(id)} />;
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-[calc(100dvh-4.75rem)] items-center justify-center px-4 text-sm text-muted-foreground">
+          Loading permit…
+        </div>
+      }
+    >
+      <PermitPdfPage permitId={decodeURIComponent(id)} />
+    </Suspense>
+  );
 }

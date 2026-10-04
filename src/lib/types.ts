@@ -1,5 +1,18 @@
 export type DocumentKind = "pdf" | "image";
 
+export type PermitType =
+  | "residential"
+  | "commercial"
+  | "industrial"
+  | "renovation"
+  | "demolition"
+  | "electrical"
+  | "plumbing"
+  | "mechanical"
+  | "occupancy"
+  | "zoning"
+  | "other";
+
 /** Uploaded file attached to a permit (PDF or image). */
 export type DocumentRecord = {
   id: string;
@@ -21,6 +34,7 @@ export type PermitRecord = {
   id: string;
   email: string;
   title: string;
+  type: PermitType;
   createdAt: string;
   documents: DocumentRecord[];
 };

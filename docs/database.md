@@ -43,7 +43,7 @@ Details: [prisma.md](./prisma.md).
 ## Entities
 
 - **users**: keyed by email for the mock-auth era. Later map Clerk user IDs here.
-- **permits**: permit *case* (title). Does **not** store file bytes.
+- **permits**: permit *case* (`title`, `type` via `PermitType` enum). Does **not** store file bytes.
 - **documents**: uploaded PDF or image files (`DocumentKind`: `pdf` | `image`) belonging to a permit. Holds `storage_key` for S3/LocalStack.
 - **norm_docs**: city-norm context (paste, upload, or future web-fetched content).
 - **review_runs**: selected permit + norms for an LLM review attempt.
@@ -56,6 +56,7 @@ Details: [prisma.md](./prisma.md).
 | --- | -------------------- | ----------------------------------------------------------------------- |
 | 1   | `0001_init`          | Baseline tables                                                         |
 | 2   | `0002_add_documents` | Split file fields off permits into `documents`                          |
+| 3   | `0003_add_permit_type` | Add `PermitType` enum and `permits.type`                              |
 
 See [`prisma/migrations/README.md`](../prisma/migrations/README.md).
 
@@ -82,6 +83,7 @@ erDiagram
     uuid id PK
     uuid user_id FK
     text title
+    enum type
     timestamptz created_at
   }
 

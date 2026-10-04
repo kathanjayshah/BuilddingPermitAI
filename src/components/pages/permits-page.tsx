@@ -9,6 +9,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { UploadPermitModal } from "@/components/permits/upload-permit-modal";
 import { usePermits } from "@/hooks/use-permits";
+import { labelPermitType } from "@/lib/permit-types";
 import type { PermitRecord } from "@/lib/types";
 
 export function PermitsPage() {
@@ -20,10 +21,15 @@ export function PermitsPage() {
     () => [
       {
         accessorKey: "title",
-        header: "Permit",
+        header: "Title",
         cell: ({ row }) => (
           <span className="font-medium">{row.original.title}</span>
         ),
+      },
+      {
+        accessorKey: "type",
+        header: "Type",
+        cell: ({ row }) => labelPermitType(row.original.type),
       },
       {
         id: "documents",
@@ -48,14 +54,14 @@ export function PermitsPage() {
       <div className="flex justify-end">
         <Button type="button" onClick={() => setUploadOpen(true)}>
           <Upload className="size-4" />
-          Upload document
+          New permit
         </Button>
       </div>
       <DataTable
         columns={columns}
         data={permitsQuery.data ?? []}
         isLoading={permitsQuery.isLoading}
-        emptyMessage="No permits yet. Upload a PDF or image to create one."
+        emptyMessage="No permits yet. Create a permit and attach a document."
         getRowId={(row) => row.id}
         onRowClick={(row) => openPermit(row.id)}
       />

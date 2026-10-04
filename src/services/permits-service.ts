@@ -1,5 +1,5 @@
 import { apiJson } from "@/services/http";
-import type { DocumentRecord, PermitRecord } from "@/lib/types";
+import type { DocumentRecord, PermitRecord, PermitType } from "@/lib/types";
 
 export type DocumentFileResponse = {
   url: string;
@@ -15,10 +15,11 @@ export const permitsService = {
   list: () => apiJson<{ permits: PermitRecord[] }>("/api/permits"),
 
   /** Create a permit and attach the first document (PDF or image). */
-  upload: async (file: File, title?: string) => {
+  upload: async (file: File, title: string, type: PermitType) => {
     const form = new FormData();
     form.append("file", file);
-    if (title?.trim()) form.append("title", title.trim());
+    form.append("title", title.trim());
+    form.append("type", type);
     return apiJson<{ permit: PermitRecord }>("/api/permits", {
       method: "POST",
       body: form,

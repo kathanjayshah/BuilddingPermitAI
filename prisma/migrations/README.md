@@ -43,6 +43,7 @@ npm run db:migrate
 | --- | --- | --- |
 | 1 | `0001_init` | Baseline schema for the MVP: enable `pgvector`, create `users`, `permits`, `norm_docs`, `review_runs`, and `review_run_norms`. Needed so durable storage can replace the in-memory mock later, and so RAG can use the same Postgres later. |
 | 2 | `0002_add_documents` | Split file bytes off `permits` into `documents` (`DocumentKind` pdf/image). A permit is a case that owns many documents. Migrates existing permit file columns into one document per permit. |
+| 3 | `0003_add_permit_type` | Add `PermitType` enum and `permits.type` for common permit categories (residential, commercial, electrical, and others). |
 
 ## Related docs
 

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { usePermits } from "@/hooks/use-permits";
 import { useNorms } from "@/hooks/use-norms";
 import { useCreateReview, useReviews } from "@/hooks/use-reviews";
+import { labelPermitType } from "@/lib/permit-types";
 import type { ReviewRun } from "@/lib/types";
 
 export function ReviewsPage() {
@@ -78,7 +79,7 @@ export function ReviewsPage() {
             <option value="">Select a permit...</option>
             {(permitsQuery.data ?? []).map((permit) => (
               <option key={permit.id} value={permit.id}>
-                {permit.title}
+                {permit.title} ({labelPermitType(permit.type)})
               </option>
             ))}
           </select>

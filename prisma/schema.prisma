@@ -14,10 +14,25 @@ enum NormSource {
   web
 }
 
-/// Stored file kind on a permit (PDF, image, …).
+/// Stored file kind on a permit (PDF or image).
 enum DocumentKind {
   pdf
   image
+}
+
+/// Common municipal / building permit categories.
+enum PermitType {
+  residential
+  commercial
+  industrial
+  renovation
+  demolition
+  electrical
+  plumbing
+  mechanical
+  occupancy
+  zoning
+  other
 }
 
 model User {
@@ -37,12 +52,14 @@ model Permit {
   id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId     String      @map("user_id") @db.Uuid
   title      String
+  type       PermitType  @default(other)
   createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   documents  Document[]
   reviewRuns ReviewRun[]
 
   @@index([userId], map: "idx_permits_user_id")
+  @@index([type], map: "idx_permits_type")
   @@index([createdAt(sort: Desc)], map: "idx_permits_created_at")
   @@map("permits")
 }

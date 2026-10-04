@@ -74,5 +74,5 @@ Copies from `node_modules/pdfjs-dist/{wasm,cmaps,standard_fonts,iccs}` → `publ
 ## Highlights
 
 - Stored in the in-memory mock store, scoped by session email + permit id
-- Geometry is percent of the page box (`x`, `y`, `width`, `height` in 0–100)
+- Geometry is percent of the page box (`x`, `y`, `width`, `height` in 0-100)
 - API: `src/api/highlights.ts` / `src/services/highlights-service.ts`

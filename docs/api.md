@@ -8,21 +8,23 @@ Frontend clients should use `src/services/*` (see [frontend.md](./frontend.md)).
 
 | Method | Path | Body | Response |
 | --- | --- | --- | --- |
-| `GET` | `/api/session` | — | `{ email }` or `{ email: null }` |
+| `GET` | `/api/session` | - | `{ email }` or `{ email: null }` |
 | `POST` | `/api/session` | `{ email }` | `{ email }` + sets httpOnly cookie |
-| `DELETE` | `/api/session` | — | `{ ok: true }` clears cookie |
+| `DELETE` | `/api/session` | - | `{ ok: true }` clears cookie |
 
 ## Permits
 
 | Method | Path | Body | Response |
 | --- | --- | --- | --- |
-| `GET` | `/api/permits` | — | `{ permits }` each with nested `documents[]` |
-| `POST` | `/api/permits` | `multipart` `file` (PDF or image); optional `title` | Creates permit + first document (201) |
-| `GET` | `/api/permits/:id/documents` | — | `{ documents }` |
+| `GET` | `/api/permits` | - | `{ permits }` each with nested `documents[]` |
+| `POST` | `/api/permits` | `multipart` `file`, `title`, `type` (`PermitType`) | Creates permit + first document (201) |
+| `GET` | `/api/permits/:id/documents` | - | `{ documents }` |
 | `POST` | `/api/permits/:id/documents` | `multipart` `file` | Adds a document to the permit (201) |
-| `GET` | `/api/permits/:id/file` | — | Redirects to the first PDF document file route |
+| `GET` | `/api/permits/:id/file` | - | Redirects to the first PDF document file route |
 
-`PermitRecord`: `id`, `email`, `title`, `createdAt`, `documents[]`.
+`PermitRecord`: `id`, `email`, `title`, `type`, `createdAt`, `documents[]`.
+
+`PermitType`: `residential`, `commercial`, `industrial`, `renovation`, `demolition`, `electrical`, `plumbing`, `mechanical`, `occupancy`, `zoning`, `other`.
 
 ## Documents
 

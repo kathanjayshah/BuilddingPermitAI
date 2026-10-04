@@ -8,7 +8,7 @@ This block is written and re-added by `next dev`. Verify at `node_modules/next/d
 
 <!-- END:nextjs-agent-rules -->
 
-# Building Permit AI — agent notes
+# Building Permit AI - agent notes
 
 This file is the **editor-neutral** entry for AI assistants (Cursor, VS Code, Claude Code, Copilot, Zed, and others). Project rules live in `docs/`, not in a vendor-only folder.
 
@@ -21,6 +21,7 @@ Full guide: [`docs/agent-style.md`](docs/agent-style.md)
 - Use short sentences and active voice.
 - Use simple words. Do not use slang or idioms.
 - Keep code, paths, APIs, and commit subjects unchanged.
+- Never use an em dash (`—`) in replies, docs, UI copy, or code comments. Use a hyphen (`-`), colon, or a new sentence instead.
 
 ## Docs
 

@@ -9,7 +9,7 @@ Entry for agents: [`AGENTS.md`](../AGENTS.md) → this guide.
 ```text
 <type>(optional-scope): <short summary in imperative mood>
 
-[optional body — why, not a file list]
+[optional body: why, not a file list]
 
 [optional footer]
 ```

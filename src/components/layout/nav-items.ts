@@ -55,7 +55,7 @@ export function getNavItemForPath(pathname: string): NavItem {
   return match ?? navItems[0]!;
 }
 
-/** `/permits/{id}` detail route — PDF open from the table. */
+/** `/permits/{id}` detail route: PDF open from the table. */
 export function getPermitIdFromPath(pathname: string): string | null {
   const match = pathname.match(/^\/permits\/([^/]+)$/);
   if (!match?.[1] || match[1] === "new") return null;
