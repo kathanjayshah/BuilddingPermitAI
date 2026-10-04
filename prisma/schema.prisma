@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NormSource {
+  upload
+  paste
+  web_stub
+  web
+}
+
+model User {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email      String      @unique
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  permits    Permit[]
+  normDocs   NormDoc[]
+  reviewRuns ReviewRun[]
+
+  @@map("users")
+}
+
+model Permit {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String      @map("user_id") @db.Uuid
+  fileName   String      @map("file_name")
+  fileSize   BigInt      @map("file_size")
+  mimeType   String      @default("application/pdf") @map("mime_type")
+  storageKey String      @map("storage_key")
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewRuns ReviewRun[]
+
+  @@index([userId], map: "idx_permits_user_id")
+  @@index([createdAt(sort: Desc)], map: "idx_permits_created_at")
+  @@map("permits")
+}
+
+model NormDoc {
+  id         String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String          @map("user_id") @db.Uuid
+  title      String
+  source     NormSource
+  content    String          @default("")
+  fileName   String?         @map("file_name")
+  sourceUrl  String?         @map("source_url")
+  createdAt  DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewRuns ReviewRunNorm[]
+
+  @@index([userId], map: "idx_norm_docs_user_id")
+  @@index([createdAt(sort: Desc)], map: "idx_norm_docs_created_at")
+  @@map("norm_docs")
+}
+
+model ReviewRun {
+  id        String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String          @map("user_id") @db.Uuid
+  permitId  String          @map("permit_id") @db.Uuid
+  status    String          @default("queued")
+  note      String?
+  createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permit    Permit          @relation(fields: [permitId], references: [id], onDelete: Cascade)
+  norms     ReviewRunNorm[]
+
+  @@index([userId], map: "idx_review_runs_user_id")
+  @@index([permitId], map: "idx_review_runs_permit_id")
+  @@index([createdAt(sort: Desc)], map: "idx_review_runs_created_at")
+  @@map("review_runs")
+}
+
+model ReviewRunNorm {
+  reviewRunId String    @map("review_run_id") @db.Uuid
+  normDocId   String    @map("norm_doc_id") @db.Uuid
+  reviewRun   ReviewRun @relation(fields: [reviewRunId], references: [id], onDelete: Cascade)
+  normDoc     NormDoc   @relation(fields: [normDocId], references: [id], onDelete: Cascade)
+
+  @@id([reviewRunId, normDocId])
+  @@index([normDocId], map: "idx_review_run_norms_norm_doc_id")
+  @@map("review_run_norms")
+}

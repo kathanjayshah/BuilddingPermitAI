@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: bpa-postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: bpa
+      POSTGRES_PASSWORD: bpa_dev_password
+      POSTGRES_DB: building_permit_ai
+    volumes:
+      - bpa_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bpa -d building_permit_ai"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Local S3-compatible API (no AWS account). Same AWS SDK as production.
+  localstack:
+    image: localstack/localstack:3
+    container_name: bpa-localstack
+    restart: unless-stopped
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: s3
+      DEBUG: "0"
+      AWS_DEFAULT_REGION: us-east-1
+    volumes:
+      - bpa_localstack:/var/lib/localstack
+      - ./localstack-init:/etc/localstack/init/ready.d
+
+volumes:
+  bpa_pgdata:
+  bpa_localstack:
