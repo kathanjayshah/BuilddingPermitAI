@@ -18,6 +18,12 @@ All project writing lives in this folder. The root `README.md` is only a short q
 | [deployment.md](./deployment.md)             | Personal deploy path (Vercel + managed Postgres + real S3)      |
 | [commits.md](./commits.md)                   | Conventional Commits format + examples                          |
 
+Agent rules (not under `docs/`):
+
+- `.cursor/rules/asd-ste100.mdc` — reply in ASD-STE100 each time
+- `.cursor/skills/commit/SKILL.md` — commit message workflow
+- `AGENTS.md` — Next.js notes + project agent pointers
+
 Related code folders (not docs):
 
 - `prisma/` for schema + sequential migrations

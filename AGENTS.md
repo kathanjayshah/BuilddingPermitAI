@@ -10,6 +10,16 @@ This block is written and re-added by `next dev`. Verify at `node_modules/next/d
 
 # Building Permit AI — agent notes
 
+## Response language (required)
+
+Write every chat reply in **ASD-STE100** (Simplified Technical English).
+
+Rule file (always on): [`.cursor/rules/asd-ste100.mdc`](.cursor/rules/asd-ste100.mdc)
+
+- Use short sentences and active voice.
+- Use simple words. Do not use slang or idioms.
+- Keep code, paths, APIs, and commit subjects unchanged.
+
 ## Docs
 
 Project documentation lives in [`docs/`](docs/README.md). Prefer updating those docs when behavior or setup changes.
