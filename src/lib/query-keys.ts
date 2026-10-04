@@ -3,6 +3,6 @@ export const queryKeys = {
   permits: ["permits"] as const,
   norms: ["norms"] as const,
   reviews: ["reviews"] as const,
-  highlights: (permitId: string) => ["highlights", permitId] as const,
-  permitFile: (permitId: string) => ["permit-file", permitId] as const,
+  highlights: (documentId: string) => ["highlights", documentId] as const,
+  documentFile: (documentId: string) => ["document-file", documentId] as const,
 };

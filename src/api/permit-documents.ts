@@ -2,34 +2,45 @@ import { NextResponse } from "next/server";
 import { getSessionEmail } from "@/lib/session";
 import {
   addDocument,
-  addPermit,
   createId,
   getPermit,
-  listPermits,
+  listDocuments,
 } from "@/lib/mock/store";
-import { detectDocumentKind, titleFromFileName } from "@/lib/documents";
+import { detectDocumentKind } from "@/lib/documents";
 import { uploadDocumentObject } from "@/lib/storage/s3";
 
-export async function GET() {
+type Params = { params: Promise<{ id: string }> };
+
+export async function GET(_request: Request, { params }: Params) {
   const email = await getSessionEmail();
   if (!email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  return NextResponse.json({ permits: listPermits(email) });
+
+  const { id: permitId } = await params;
+  if (!getPermit(email, permitId)) {
+    return NextResponse.json({ error: "Permit not found." }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    documents: listDocuments(email, permitId),
+  });
 }
 
-/**
- * Create a permit case and attach the uploaded file as its first document.
- */
-export async function POST(request: Request) {
+/** Add another document to an existing permit. */
+export async function POST(request: Request, { params }: Params) {
   const email = await getSessionEmail();
   if (!email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id: permitId } = await params;
+  if (!getPermit(email, permitId)) {
+    return NextResponse.json({ error: "Permit not found." }, { status: 404 });
   }
 
   const form = await request.formData();
   const file = form.get("file");
-  const titleInput = form.get("title");
 
   if (!(file instanceof File)) {
     return NextResponse.json(
@@ -50,15 +61,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "File is empty." }, { status: 400 });
   }
 
-  const permitId = createId("permit");
   const documentId = createId("doc");
   const mimeType =
     file.type || (kind === "pdf" ? "application/pdf" : "application/octet-stream");
   const bytes = Buffer.from(await file.arrayBuffer());
   const storageKey = `permits/${email}/${permitId}/${documentId}/${file.name}`;
-  const title =
-    (typeof titleInput === "string" && titleInput.trim()) ||
-    titleFromFileName(file.name);
 
   try {
     const uploaded = await uploadDocumentObject({
@@ -68,14 +75,7 @@ export async function POST(request: Request) {
       fileName: file.name,
     });
 
-    const permit = addPermit({
-      id: permitId,
-      email,
-      title,
-      createdAt: new Date().toISOString(),
-    });
-
-    addDocument({
+    const document = addDocument({
       id: documentId,
       permitId,
       email,
@@ -88,10 +88,7 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
     });
 
-    return NextResponse.json(
-      { permit: getPermit(email, permit.id) ?? permit },
-      { status: 201 },
-    );
+    return NextResponse.json({ document }, { status: 201 });
   } catch (error) {
     const message =
       error instanceof Error

@@ -18,10 +18,12 @@ export function PageTopbar() {
   const Icon = item.icon;
 
   const title = permitId
-    ? (permit?.fileName ?? (permitsQuery.isLoading ? "Loading…" : "Permit"))
+    ? (permit?.title ?? (permitsQuery.isLoading ? "Loading…" : "Permit"))
     : item.title;
   const description = permitId
-    ? "Scroll pages. Drag to add a highlight."
+    ? `${permit?.documents.length ?? 0} document${
+        (permit?.documents.length ?? 0) === 1 ? "" : "s"
+      }. Open a PDF to highlight.`
     : item.description;
 
   return (

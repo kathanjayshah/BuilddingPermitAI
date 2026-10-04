@@ -72,7 +72,7 @@ export function buildObjectUrl(storageKey: string): string {
     .join("/")}`;
 }
 
-export async function uploadPermitPdf(options: {
+export async function uploadDocumentObject(options: {
   storageKey: string;
   bytes: Buffer;
   contentType: string;
@@ -98,8 +98,8 @@ export async function uploadPermitPdf(options: {
   };
 }
 
-/** Server-side read for same-origin PDF proxy (avoids browser CORS / blank canvas). */
-export async function getPermitPdfObject(storageKey: string): Promise<{
+/** Server-side read for same-origin document proxy. */
+export async function getDocumentObject(storageKey: string): Promise<{
   bytes: Buffer;
   contentType: string;
 }> {

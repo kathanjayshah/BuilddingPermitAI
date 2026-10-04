@@ -21,12 +21,12 @@ npm run db:migrate
 
 | Script                      | What it does                                       |
 | --------------------------- | -------------------------------------------------- |
-| `npm run docker:up`         | Start Postgres container                           |
-| `npm run docker:down`       | Stop Postgres container                            |
+| `npm run docker:up`         | Start Postgres + LocalStack                        |
+| `npm run docker:down`       | Stop Compose services                              |
 | `npm run db:migrate`        | Apply pending Prisma migrations (`migrate deploy`) |
 | `npm run db:migrate:dev`    | Create/apply migrations while editing the schema   |
 | `npm run db:migrate:status` | Show migration status                              |
-| `npm run db:reset`          | Wipe Docker volume and re-apply migrations         |
+| `npm run db:reset`          | Wipe Docker volumes and re-apply migrations        |
 | `npm run db:studio`         | Open Prisma Studio                                 |
 | `npm run db:generate`       | Regenerate Prisma Client                           |
 
@@ -40,20 +40,11 @@ Prisma is **forward-migration** oriented:
 
 Details: [prisma.md](./prisma.md).
 
-## Folder split
-
-| Path                           | Contents                                 |
-| ------------------------------ | ---------------------------------------- |
-| `prisma/schema.prisma`         | Models / enums (source of truth)         |
-| `prisma/migrations/000N_name/` | One sequential migration each            |
-| `prisma/migrations/README.md`  | Naming rules + why each migration exists |
-| `src/lib/db/`                  | Prisma client singleton                  |
-| `docker/`                      | Postgres + pgvector Compose service      |
-
 ## Entities
 
 - **users**: keyed by email for the mock-auth era. Later map Clerk user IDs here.
-- **permits**: PDF metadata and storage pointer (object storage key later).
+- **permits**: permit *case* (title). Does **not** store file bytes.
+- **documents**: uploaded PDF or image files (`DocumentKind`: `pdf` | `image`) belonging to a permit. Holds `storage_key` for S3/LocalStack.
 - **norm_docs**: city-norm context (paste, upload, or future web-fetched content).
 - **review_runs**: selected permit + norms for an LLM review attempt.
 - **review_run_norms**: join table for many norms per review.
@@ -61,23 +52,25 @@ Details: [prisma.md](./prisma.md).
 
 ## Migrations today
 
-| #   | Folder      | Purpose                                                                                 |
-| --- | ----------- | --------------------------------------------------------------------------------------- |
-| 1   | `0001_init` | Baseline: `vector` extension + users, permits, norm_docs, review_runs, review_run_norms |
+| #   | Folder               | Purpose                                                                 |
+| --- | -------------------- | ----------------------------------------------------------------------- |
+| 1   | `0001_init`          | Baseline tables                                                         |
+| 2   | `0002_add_documents` | Split file fields off permits into `documents`                          |
 
-See the full changelog in [`prisma/migrations/README.md`](../prisma/migrations/README.md).
+See [`prisma/migrations/README.md`](../prisma/migrations/README.md).
 
 ## ERD
 
 ```mermaid
 erDiagram
   USERS ||--o{ PERMITS : owns
+  USERS ||--o{ DOCUMENTS : owns
   USERS ||--o{ NORM_DOCS : owns
   USERS ||--o{ REVIEW_RUNS : starts
+  PERMITS ||--o{ DOCUMENTS : has
   PERMITS ||--o{ REVIEW_RUNS : reviewed_in
   REVIEW_RUNS ||--o{ REVIEW_RUN_NORMS : includes
   NORM_DOCS ||--o{ REVIEW_RUN_NORMS : selected_in
-  NORM_DOCS ||--o{ NORM_CHUNKS : "chunked (later)"
 
   USERS {
     uuid id PK
@@ -88,6 +81,15 @@ erDiagram
   PERMITS {
     uuid id PK
     uuid user_id FK
+    text title
+    timestamptz created_at
+  }
+
+  DOCUMENTS {
+    uuid id PK
+    uuid permit_id FK
+    uuid user_id FK
+    enum kind
     text file_name
     bigint file_size
     text mime_type
@@ -118,14 +120,6 @@ erDiagram
   REVIEW_RUN_NORMS {
     uuid review_run_id FK
     uuid norm_doc_id FK
-  }
-
-  NORM_CHUNKS {
-    uuid id PK
-    uuid norm_doc_id FK
-    int chunk_index
-    text content
-    vector embedding
   }
 ```
 

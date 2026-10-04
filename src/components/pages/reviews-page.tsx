@@ -78,7 +78,7 @@ export function ReviewsPage() {
             <option value="">Select a permit...</option>
             {(permitsQuery.data ?? []).map((permit) => (
               <option key={permit.id} value={permit.id}>
-                {permit.fileName}
+                {permit.title}
               </option>
             ))}
           </select>

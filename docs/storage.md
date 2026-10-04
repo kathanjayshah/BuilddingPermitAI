@@ -20,30 +20,31 @@ Browser                Next.js API                 LocalStack / S3
    |  react-pdf renders the proxied URL in the viewer    |
 ```
 
-1. Browser uploads the PDF to `POST /api/permits`
+1. Browser uploads a PDF or image to `POST /api/permits` (creates permit + first document) or `POST /api/permits/:id/documents`
 2. Server (`src/lib/storage/s3.ts`) writes the object with `@aws-sdk/client-s3`
-3. Server saves `storageKey` + `fileUrl` on the permit record (no PDF bytes in memory)
-4. Viewer asks `GET /api/permits/:id/file?meta=1` for the same-origin proxy path
-5. react-pdf loads `GET /api/permits/:id/file`, which **proxies** bytes from S3
+3. Server saves `storageKey` + `fileUrl` on the **document** record (permit keeps only title + relations)
+4. Viewer asks `GET /api/documents/:id/file?meta=1` for the same-origin proxy path
+5. react-pdf (or `<img>`) loads `GET /api/documents/:id/file`, which **proxies** bytes from S3
 
 ### Why proxy?
 
-Do **not** point react-pdf at the raw LocalStack/S3 URL (`localhost:4566`). Cross-origin fetches often produce a blank white canvas even when the object exists. The browser always loads the PDF via the Next.js same-origin route.
+Do **not** point react-pdf at the raw LocalStack/S3 URL (`localhost:4566`). Cross-origin fetches often produce a blank white canvas even when the object exists. The browser always loads the file via the Next.js same-origin route.
 
 ### Code map
 
 | Piece | Path |
 | --- | --- |
 | S3 client + upload/get | `src/lib/storage/s3.ts` |
-| Upload handler | `src/api/permits.ts` |
-| File proxy / meta | `src/app/api/permits/[id]/file/route.ts` |
-| Frontend fetch helpers | `src/services/permits-service.ts` |
-| Viewer hook | `src/hooks/use-permits.ts` → `usePermitFileUrl` |
+| Create permit + first doc | `src/api/permits.ts` |
+| Add doc to permit | `src/api/permit-documents.ts` |
+| File proxy / meta | `src/api/document-file.ts` |
+| Frontend helpers | `src/services/permits-service.ts` |
+| Viewer hook | `src/hooks/use-permits.ts` → `useDocumentFileUrl` |
 
 Object key shape:
 
 ```text
-permits/{email}/{permitId}/{originalFileName}.pdf
+permits/{email}/{permitId}/{documentId}/{originalFileName}
 ```
 
 ## Local: LocalStack (no AWS account)

@@ -11,12 +11,6 @@ import { UploadPermitModal } from "@/components/permits/upload-permit-modal";
 import { usePermits } from "@/hooks/use-permits";
 import type { PermitRecord } from "@/lib/types";
 
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 export function PermitsPage() {
   const router = useRouter();
   const permitsQuery = usePermits(true);
@@ -25,20 +19,20 @@ export function PermitsPage() {
   const columns = useMemo<ColumnDef<PermitRecord>[]>(
     () => [
       {
-        accessorKey: "fileName",
-        header: "File",
+        accessorKey: "title",
+        header: "Permit",
         cell: ({ row }) => (
-          <span className="font-medium">{row.original.fileName}</span>
+          <span className="font-medium">{row.original.title}</span>
         ),
       },
       {
-        accessorKey: "fileSize",
-        header: "Size",
-        cell: ({ row }) => formatBytes(row.original.fileSize),
+        id: "documents",
+        header: "Documents",
+        cell: ({ row }) => row.original.documents.length,
       },
       {
         accessorKey: "createdAt",
-        header: "Uploaded",
+        header: "Created",
         cell: ({ row }) => new Date(row.original.createdAt).toLocaleString(),
       },
     ],
@@ -54,14 +48,14 @@ export function PermitsPage() {
       <div className="flex justify-end">
         <Button type="button" onClick={() => setUploadOpen(true)}>
           <Upload className="size-4" />
-          Upload PDF
+          Upload document
         </Button>
       </div>
       <DataTable
         columns={columns}
         data={permitsQuery.data ?? []}
         isLoading={permitsQuery.isLoading}
-        emptyMessage="No permits yet. Upload a PDF to get started."
+        emptyMessage="No permits yet. Upload a PDF or image to create one."
         getRowId={(row) => row.id}
         onRowClick={(row) => openPermit(row.id)}
       />

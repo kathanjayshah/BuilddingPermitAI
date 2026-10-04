@@ -1,4 +1,5 @@
 import type {
+  DocumentRecord,
   NormRecord,
   PermitRecord,
   PdfHighlight,
@@ -7,6 +8,7 @@ import type {
 
 type MemoryStore = {
   permits: PermitRecord[];
+  documents: DocumentRecord[];
   norms: NormRecord[];
   reviews: ReviewRun[];
   highlights: PdfHighlight[];
@@ -20,6 +22,7 @@ function getStore(): MemoryStore {
   if (!globalForStore.__bpaStore) {
     globalForStore.__bpaStore = {
       permits: [],
+      documents: [],
       norms: [],
       reviews: [],
       highlights: [],
@@ -28,19 +31,52 @@ function getStore(): MemoryStore {
   return globalForStore.__bpaStore;
 }
 
+function withDocuments(permit: PermitRecord): PermitRecord {
+  const documents = getStore()
+    .documents.filter((d) => d.permitId === permit.id)
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  return { ...permit, documents };
+}
+
 export function listPermits(email: string): PermitRecord[] {
   return getStore()
     .permits.filter((p) => p.email === email)
+    .map(withDocuments)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
-export function addPermit(permit: PermitRecord): PermitRecord {
-  getStore().permits.push(permit);
-  return permit;
+export function addPermit(
+  permit: Omit<PermitRecord, "documents">,
+): PermitRecord {
+  const row: PermitRecord = { ...permit, documents: [] };
+  getStore().permits.push(row);
+  return withDocuments(row);
 }
 
 export function getPermit(email: string, id: string): PermitRecord | undefined {
-  return getStore().permits.find((p) => p.email === email && p.id === id);
+  const permit = getStore().permits.find((p) => p.email === email && p.id === id);
+  return permit ? withDocuments(permit) : undefined;
+}
+
+export function addDocument(document: DocumentRecord): DocumentRecord {
+  getStore().documents.push(document);
+  return document;
+}
+
+export function listDocuments(
+  email: string,
+  permitId: string,
+): DocumentRecord[] {
+  return getStore()
+    .documents.filter((d) => d.email === email && d.permitId === permitId)
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+}
+
+export function getDocument(
+  email: string,
+  id: string,
+): DocumentRecord | undefined {
+  return getStore().documents.find((d) => d.email === email && d.id === id);
 }
 
 export function listNorms(email: string): NormRecord[] {
@@ -72,10 +108,10 @@ export function addReview(review: ReviewRun): ReviewRun {
 
 export function listHighlights(
   email: string,
-  permitId: string,
+  documentId: string,
 ): PdfHighlight[] {
   return getStore()
-    .highlights.filter((h) => h.email === email && h.permitId === permitId)
+    .highlights.filter((h) => h.email === email && h.documentId === documentId)
     .sort((a, b) => a.page - b.page || a.createdAt.localeCompare(b.createdAt));
 }
 

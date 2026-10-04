@@ -4,16 +4,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
 import { highlightsService } from "@/services/highlights-service";
 
-export function useHighlights(permitId: string | null, enabled: boolean) {
+export function useHighlights(documentId: string | null, enabled: boolean) {
   return useQuery({
-    queryKey: queryKeys.highlights(permitId ?? "none"),
-    enabled: enabled && Boolean(permitId),
-    queryFn: () => highlightsService.list(permitId!),
+    queryKey: queryKeys.highlights(documentId ?? "none"),
+    enabled: enabled && Boolean(documentId),
+    queryFn: () => highlightsService.list(documentId!),
     select: (data) => data.highlights,
   });
 }
 
-export function useCreateHighlight(permitId: string | null) {
+export function useCreateHighlight(documentId: string | null) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: {
@@ -25,26 +25,26 @@ export function useCreateHighlight(permitId: string | null) {
       note?: string;
       color?: string;
     }) => {
-      if (!permitId) throw new Error("permitId is required");
-      return highlightsService.create({ ...body, permitId });
+      if (!documentId) throw new Error("documentId is required");
+      return highlightsService.create({ ...body, documentId });
     },
     onSuccess: async () => {
-      if (!permitId) return;
+      if (!documentId) return;
       await queryClient.invalidateQueries({
-        queryKey: queryKeys.highlights(permitId),
+        queryKey: queryKeys.highlights(documentId),
       });
     },
   });
 }
 
-export function useDeleteHighlight(permitId: string | null) {
+export function useDeleteHighlight(documentId: string | null) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => highlightsService.remove(id),
     onSuccess: async () => {
-      if (!permitId) return;
+      if (!documentId) return;
       await queryClient.invalidateQueries({
-        queryKey: queryKeys.highlights(permitId),
+        queryKey: queryKeys.highlights(documentId),
       });
     },
   });

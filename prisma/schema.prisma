@@ -14,31 +14,57 @@ enum NormSource {
   web
 }
 
+/// Stored file kind on a permit (PDF, image, …).
+enum DocumentKind {
+  pdf
+  image
+}
+
 model User {
   id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email      String      @unique
   createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   permits    Permit[]
+  documents  Document[]
   normDocs   NormDoc[]
   reviewRuns ReviewRun[]
 
   @@map("users")
 }
 
+/// A permit case. File bytes live on related Document rows.
 model Permit {
   id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId     String      @map("user_id") @db.Uuid
-  fileName   String      @map("file_name")
-  fileSize   BigInt      @map("file_size")
-  mimeType   String      @default("application/pdf") @map("mime_type")
-  storageKey String      @map("storage_key")
+  title      String
   createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents  Document[]
   reviewRuns ReviewRun[]
 
   @@index([userId], map: "idx_permits_user_id")
   @@index([createdAt(sort: Desc)], map: "idx_permits_created_at")
   @@map("permits")
+}
+
+/// Uploaded PDF or image belonging to a permit.
+model Document {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  permitId   String       @map("permit_id") @db.Uuid
+  userId     String       @map("user_id") @db.Uuid
+  kind       DocumentKind
+  fileName   String       @map("file_name")
+  fileSize   BigInt       @map("file_size")
+  mimeType   String       @map("mime_type")
+  storageKey String       @map("storage_key")
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  permit     Permit       @relation(fields: [permitId], references: [id], onDelete: Cascade)
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([permitId], map: "idx_documents_permit_id")
+  @@index([userId], map: "idx_documents_user_id")
+  @@index([createdAt(sort: Desc)], map: "idx_documents_created_at")
+  @@map("documents")
 }
 
 model NormDoc {

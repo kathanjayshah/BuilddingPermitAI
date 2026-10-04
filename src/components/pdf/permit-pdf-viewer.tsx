@@ -12,7 +12,7 @@ import {
   useDeleteHighlight,
   useHighlights,
 } from "@/hooks/use-highlights";
-import { usePermitFileUrl } from "@/hooks/use-permits";
+import { useDocumentFileUrl } from "@/hooks/use-permits";
 import type { PdfHighlight } from "@/lib/types";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -44,7 +44,7 @@ type DragState = {
 };
 
 type Props = {
-  permitId: string | null;
+  documentId: string | null;
 };
 
 function toPercentRect(
@@ -67,7 +67,7 @@ function toPercentRect(
   };
 }
 
-export function PermitPdfViewer({ permitId }: Props) {
+export function PermitPdfViewer({ documentId }: Props) {
   const [pageCount, setPageCount] = useState(0);
   const [note, setNote] = useState("Issue to review");
   const [drag, setDrag] = useState<DragState | null>(null);
@@ -76,10 +76,10 @@ export function PermitPdfViewer({ permitId }: Props) {
   const pageEls = useRef<Map<number, HTMLDivElement>>(new Map());
   const pdfOptions = usePdfDocumentOptions();
 
-  const fileUrlQuery = usePermitFileUrl(permitId, Boolean(permitId));
-  const highlightsQuery = useHighlights(permitId, Boolean(permitId));
-  const createHighlight = useCreateHighlight(permitId);
-  const deleteHighlight = useDeleteHighlight(permitId);
+  const fileUrlQuery = useDocumentFileUrl(documentId, Boolean(documentId));
+  const highlightsQuery = useHighlights(documentId, Boolean(documentId));
+  const createHighlight = useCreateHighlight(documentId);
+  const deleteHighlight = useDeleteHighlight(documentId);
 
   const highlights = highlightsQuery.data ?? [];
 
@@ -94,7 +94,7 @@ export function PermitPdfViewer({ permitId }: Props) {
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [permitId, fileUrlQuery.data]);
+  }, [documentId, fileUrlQuery.data]);
 
   function onPointerDown(
     page: number,
@@ -125,7 +125,7 @@ export function PermitPdfViewer({ permitId }: Props) {
   }
 
   async function onPointerUp(page: number) {
-    if (!drag || drag.page !== page || !permitId) {
+    if (!drag || drag.page !== page || !documentId) {
       setDrag(null);
       return;
     }
@@ -153,10 +153,10 @@ export function PermitPdfViewer({ permitId }: Props) {
     });
   }
 
-  if (!permitId) {
+  if (!documentId) {
     return (
       <div className="flex h-full items-center justify-center rounded-lg border px-4 text-center text-sm text-muted-foreground">
-        Select a permit above, or upload a new PDF to view it here.
+        Select a PDF document to view it here.
       </div>
     );
   }

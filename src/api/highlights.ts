@@ -4,7 +4,7 @@ import {
   addHighlight,
   createId,
   deleteHighlight,
-  getPermit,
+  getDocument,
   listHighlights,
 } from "@/lib/mock/store";
 
@@ -14,19 +14,23 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const permitId = new URL(request.url).searchParams.get("permitId")?.trim();
-  if (!permitId) {
+  const documentId = new URL(request.url).searchParams
+    .get("documentId")
+    ?.trim();
+  if (!documentId) {
     return NextResponse.json(
-      { error: "permitId query param is required." },
+      { error: "documentId query param is required." },
       { status: 400 },
     );
   }
 
-  if (!getPermit(email, permitId)) {
-    return NextResponse.json({ error: "Permit not found." }, { status: 404 });
+  if (!getDocument(email, documentId)) {
+    return NextResponse.json({ error: "Document not found." }, { status: 404 });
   }
 
-  return NextResponse.json({ highlights: listHighlights(email, permitId) });
+  return NextResponse.json({
+    highlights: listHighlights(email, documentId),
+  });
 }
 
 export async function POST(request: Request) {
@@ -36,7 +40,7 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json().catch(() => null)) as {
-    permitId?: string;
+    documentId?: string;
     page?: number;
     x?: number;
     y?: number;
@@ -46,9 +50,9 @@ export async function POST(request: Request) {
     color?: string;
   } | null;
 
-  const permitId = body?.permitId?.trim() ?? "";
-  if (!permitId || !getPermit(email, permitId)) {
-    return NextResponse.json({ error: "Permit not found." }, { status: 404 });
+  const documentId = body?.documentId?.trim() ?? "";
+  if (!documentId || !getDocument(email, documentId)) {
+    return NextResponse.json({ error: "Document not found." }, { status: 404 });
   }
 
   const page = Number(body?.page);
@@ -73,7 +77,7 @@ export async function POST(request: Request) {
   const highlight = addHighlight({
     id: createId("hl"),
     email,
-    permitId,
+    documentId,
     page: Math.floor(page),
     x,
     y,

@@ -2,13 +2,13 @@ import { apiJson } from "@/services/http";
 import type { PdfHighlight } from "@/lib/types";
 
 export const highlightsService = {
-  list: (permitId: string) =>
+  list: (documentId: string) =>
     apiJson<{ highlights: PdfHighlight[] }>(
-      `/api/highlights?permitId=${encodeURIComponent(permitId)}`,
+      `/api/highlights?documentId=${encodeURIComponent(documentId)}`,
     ),
 
   create: (body: {
-    permitId: string;
+    documentId: string;
     page: number;
     x: number;
     y: number;
@@ -24,8 +24,7 @@ export const highlightsService = {
     }),
 
   remove: (id: string) =>
-    apiJson<{ ok: boolean }>(
-      `/api/highlights?id=${encodeURIComponent(id)}`,
-      { method: "DELETE" },
-    ),
+    apiJson<{ ok: boolean }>(`/api/highlights?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    }),
 };

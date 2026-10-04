@@ -79,7 +79,7 @@ Hooks call services and invalidate `queryKeys` from `src/lib/query-keys.ts`.
 | Route | Purpose |
 | --- | --- |
 | `/` | Dashboard counts / shortcuts |
-| `/permits` | TanStack Table of uploads + upload modal |
-| `/permits/[id]` | Open that PDF (scroll + highlights); no upload or dropdown |
+| `/permits` | TanStack Table of permit cases + create (upload first document) |
+| `/permits/[id]` | Permit title in header; pick/add documents; open PDF or image |
 | `/norms` | Paste / upload / web stub norms |
 | `/reviews` | Stub permit-vs-norms review runs |

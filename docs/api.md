@@ -16,12 +16,22 @@ Frontend clients should use `src/services/*` (see [frontend.md](./frontend.md)).
 
 | Method | Path | Body | Response |
 | --- | --- | --- | --- |
-| `GET` | `/api/permits` | — | `{ permits: PermitRecord[] }` |
-| `POST` | `/api/permits` | `multipart/form-data` field `file` (PDF) | `{ permit }` (201); uploads to S3 |
-| `GET` | `/api/permits/:id/file` | — | PDF bytes (`Content-Type: application/pdf`) proxied from S3 |
-| `GET` | `/api/permits/:id/file?meta=1` | — | `{ url, storageKey, fileUrl, fileName, mimeType }` |
+| `GET` | `/api/permits` | — | `{ permits }` each with nested `documents[]` |
+| `POST` | `/api/permits` | `multipart` `file` (PDF or image); optional `title` | Creates permit + first document (201) |
+| `GET` | `/api/permits/:id/documents` | — | `{ documents }` |
+| `POST` | `/api/permits/:id/documents` | `multipart` `file` | Adds a document to the permit (201) |
+| `GET` | `/api/permits/:id/file` | — | Redirects to the first PDF document file route |
 
-`PermitRecord` fields (in-memory today): `id`, `email`, `fileName`, `fileSize`, `mimeType`, `storageKey`, `fileUrl`, `createdAt`.
+`PermitRecord`: `id`, `email`, `title`, `createdAt`, `documents[]`.
+
+## Documents
+
+| Method | Path | Response |
+| --- | --- | --- |
+| `GET` | `/api/documents/:id/file` | File bytes proxied from S3 |
+| `GET` | `/api/documents/:id/file?meta=1` | `{ url, storageKey, fileUrl, fileName, mimeType, kind, permitId }` |
+
+`DocumentRecord`: `id`, `permitId`, `email`, `kind` (`pdf` \| `image`), `fileName`, `fileSize`, `mimeType`, `storageKey`, `fileUrl`, `createdAt`.
 
 ## Norms
 
@@ -41,8 +51,8 @@ Frontend clients should use `src/services/*` (see [frontend.md](./frontend.md)).
 
 | Method | Path | Notes |
 | --- | --- | --- |
-| `GET` | `/api/highlights?permitId=` | List for a permit |
-| `POST` | `/api/highlights` | Create rect + note |
+| `GET` | `/api/highlights?documentId=` | List for a document |
+| `POST` | `/api/highlights` | Create rect + note (`documentId` required) |
 | `DELETE` | `/api/highlights?id=` | Delete one highlight |
 
 ## Auth errors

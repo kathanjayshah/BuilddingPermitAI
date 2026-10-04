@@ -1,6 +1,11 @@
-export type PermitRecord = {
+export type DocumentKind = "pdf" | "image";
+
+/** Uploaded file attached to a permit (PDF or image). */
+export type DocumentRecord = {
   id: string;
+  permitId: string;
   email: string;
+  kind: DocumentKind;
   fileName: string;
   fileSize: number;
   mimeType: string;
@@ -9,6 +14,15 @@ export type PermitRecord = {
   /** Public or browser-reachable object URL. */
   fileUrl: string;
   createdAt: string;
+};
+
+/** Permit case. Documents hold the uploaded files. */
+export type PermitRecord = {
+  id: string;
+  email: string;
+  title: string;
+  createdAt: string;
+  documents: DocumentRecord[];
 };
 
 export type NormSource = "upload" | "paste" | "web_stub";
@@ -42,7 +56,7 @@ export type ReviewRun = {
 export type PdfHighlight = {
   id: string;
   email: string;
-  permitId: string;
+  documentId: string;
   page: number;
   x: number;
   y: number;

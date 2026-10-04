@@ -49,21 +49,22 @@ export function UploadPermitModal({ open, onClose, onUploaded }: Props) {
           </div>
           <div>
             <h2 id={titleId} className="text-base font-semibold">
-              Upload permit PDF
+              New permit
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Choose a building-permit PDF to view and highlight.
+              Upload a PDF or image. This creates a permit and attaches the
+              file as a document.
             </p>
           </div>
         </div>
 
         <div className="space-y-3">
           <div className="space-y-2">
-            <Label htmlFor="upload-permit-file">PDF file</Label>
+            <Label htmlFor="upload-permit-file">PDF or image</Label>
             <Input
               id="upload-permit-file"
               type="file"
-              accept="application/pdf,.pdf"
+              accept="application/pdf,.pdf,image/*"
               disabled={uploadPermit.isPending}
               onChange={async (event) => {
                 const file = event.target.files?.[0];
