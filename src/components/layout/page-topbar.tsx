@@ -8,6 +8,13 @@ import {
 } from "@/components/layout/nav-items";
 import { SHELL_HEADER_HEIGHT_CLASS } from "@/components/layout/shell-header";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAddPermitDocument, usePermits } from "@/hooks/use-permits";
 import { labelPermitType } from "@/lib/permit-types";
 import { cn } from "@/lib/utils";
@@ -90,22 +97,35 @@ function PermitDocumentTopbar({ permitId }: { permitId: string }) {
         <div className="flex min-w-0 flex-1 flex-wrap items-end gap-3">
           <div className="min-w-0 space-y-1">
             <p className="text-xs font-medium text-muted-foreground">Document</p>
-            <select
-              aria-label="Document"
-              className="flex h-8 w-full min-w-[12rem] max-w-md rounded-lg border border-input bg-background px-2 text-sm"
-              value={selectedDocId ?? ""}
-              onChange={(e) => selectDocument(e.target.value)}
+            <Select
+              value={selectedDocId ?? null}
+              onValueChange={(value) => {
+                if (value) selectDocument(value);
+              }}
+              disabled={documents.length === 0}
             >
-              {documents.length === 0 ? (
-                <option value="">No documents yet</option>
-              ) : (
-                documents.map((doc) => (
-                  <option key={doc.id} value={doc.id}>
+              <SelectTrigger
+                aria-label="Document"
+                size="sm"
+                className="h-8 w-full min-w-[12rem] max-w-md"
+              >
+                <SelectValue placeholder="No documents yet">
+                  {(value) => {
+                    const doc = documents.find((d) => d.id === value);
+                    return doc
+                      ? `${doc.fileName} (${doc.kind})`
+                      : "No documents yet";
+                  }}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {documents.map((doc) => (
+                  <SelectItem key={doc.id} value={doc.id}>
                     {doc.fileName} ({doc.kind})
-                  </option>
-                ))
-              )}
-            </select>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-1">
             <p className="text-xs font-medium text-muted-foreground">

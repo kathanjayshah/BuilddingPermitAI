@@ -23,6 +23,10 @@ Full guide: [`docs/agent-style.md`](docs/agent-style.md)
 - Keep code, paths, APIs, and commit subjects unchanged.
 - Never use an em dash (`—`) in replies, docs, UI copy, or code comments. Use a hyphen (`-`), colon, or a new sentence instead.
 
+## UI components
+
+For new UI, use **shadcn/ui** in `src/components/ui/` (Select, Checkbox, Dialog, and so on). Do not add native `<select>` or other native controls when a shadcn primitive exists. Details: [`docs/frontend.md`](docs/frontend.md).
+
 ## Docs
 
 Project documentation: [`docs/README.md`](docs/README.md). Update docs when behavior or setup changes.

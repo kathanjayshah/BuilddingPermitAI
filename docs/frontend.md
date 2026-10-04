@@ -8,6 +8,14 @@
 - TanStack Table for list pages
 - react-pdf (PDF.js) for the permit viewer (see [pdf-viewer.md](./pdf-viewer.md))
 
+## UI components (required)
+
+Prefer **shadcn/ui** primitives under `src/components/ui/` for all new UI.
+
+- Selects, checkboxes, dialogs, menus, and similar controls: use the shadcn component. Do not use native `<select>`, `<input type="checkbox">`, or ad-hoc dropdown markup.
+- Add missing primitives with `npx shadcn@latest add <name>`.
+- Compose product UI from those primitives. Keep native inputs only when shadcn has no match (for example `type="file"`).
+
 ## Folder map
 
 ```text

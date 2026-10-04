@@ -5,6 +5,13 @@ import { FilePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useUploadPermit } from "@/hooks/use-permits";
 import { PERMIT_TYPES, PERMIT_TYPE_LABELS } from "@/lib/permit-types";
 import type { PermitType } from "@/lib/types";
@@ -116,20 +123,34 @@ export function UploadPermitModal({ open, onClose, onUploaded }: Props) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="new-permit-type">Permit type</Label>
-            <select
-              id="new-permit-type"
-              className="flex h-9 w-full rounded-lg border border-input bg-background px-3 text-sm"
+            <Select
               value={type}
-              onChange={(e) => setType(e.target.value as PermitType)}
+              onValueChange={(value) => {
+                if (value) setType(value as PermitType);
+              }}
               disabled={uploadPermit.isPending}
-              required
             >
-              {PERMIT_TYPES.map((value) => (
-                <option key={value} value={value}>
-                  {PERMIT_TYPE_LABELS[value]}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger
+                id="new-permit-type"
+                className="w-full"
+                size="default"
+              >
+                <SelectValue>
+                  {(value) =>
+                    value
+                      ? PERMIT_TYPE_LABELS[value as PermitType]
+                      : "Select type"
+                  }
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {PERMIT_TYPES.map((value) => (
+                  <SelectItem key={value} value={value}>
+                    {PERMIT_TYPE_LABELS[value]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="new-permit-file">Document to attach</Label>

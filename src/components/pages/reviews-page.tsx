@@ -6,7 +6,15 @@ import { PageFrame } from "@/components/layout/page-frame";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { usePermits } from "@/hooks/use-permits";
 import { useNorms } from "@/hooks/use-norms";
 import { useCreateReview, useReviews } from "@/hooks/use-reviews";
@@ -70,19 +78,30 @@ export function ReviewsPage() {
       <div className="grid gap-4 rounded-lg border p-4 lg:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="review-permit">Permit</Label>
-          <select
-            id="review-permit"
-            className="flex h-9 w-full rounded-lg border border-input bg-background px-3 text-sm"
-            value={permitId}
-            onChange={(e) => setPermitId(e.target.value)}
+          <Select
+            value={permitId || null}
+            onValueChange={(value) => setPermitId(value ?? "")}
           >
-            <option value="">Select a permit...</option>
-            {(permitsQuery.data ?? []).map((permit) => (
-              <option key={permit.id} value={permit.id}>
-                {permit.title} ({labelPermitType(permit.type)})
-              </option>
-            ))}
-          </select>
+            <SelectTrigger id="review-permit" className="w-full">
+              <SelectValue placeholder="Select a permit...">
+                {(value) => {
+                  const permit = (permitsQuery.data ?? []).find(
+                    (p) => p.id === value,
+                  );
+                  return permit
+                    ? `${permit.title} (${labelPermitType(permit.type)})`
+                    : "Select a permit...";
+                }}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {(permitsQuery.data ?? []).map((permit) => (
+                <SelectItem key={permit.id} value={permit.id}>
+                  {permit.title} ({labelPermitType(permit.type)})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="space-y-2">
           <Label>Norms</Label>
@@ -90,28 +109,33 @@ export function ReviewsPage() {
             {(normsQuery.data ?? []).length === 0 ? (
               <p className="text-xs text-muted-foreground">No norms yet.</p>
             ) : (
-              (normsQuery.data ?? []).map((norm) => (
-                <label key={norm.id} className="flex items-start gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    className="mt-1"
-                    checked={selectedNormIds.includes(norm.id)}
-                    onChange={() =>
-                      setSelectedNormIds((prev) =>
-                        prev.includes(norm.id)
-                          ? prev.filter((id) => id !== norm.id)
-                          : [...prev, norm.id],
-                      )
-                    }
-                  />
-                  <span>
-                    <span className="font-medium">{norm.title}</span>
-                    <span className="ml-2 text-xs text-muted-foreground">
-                      {norm.source}
+              (normsQuery.data ?? []).map((norm) => {
+                const checked = selectedNormIds.includes(norm.id);
+                return (
+                  <label
+                    key={norm.id}
+                    className="flex items-start gap-2 text-sm"
+                  >
+                    <Checkbox
+                      className="mt-1"
+                      checked={checked}
+                      onCheckedChange={() =>
+                        setSelectedNormIds((prev) =>
+                          prev.includes(norm.id)
+                            ? prev.filter((id) => id !== norm.id)
+                            : [...prev, norm.id],
+                        )
+                      }
+                    />
+                    <span>
+                      <span className="font-medium">{norm.title}</span>
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        {norm.source}
+                      </span>
                     </span>
-                  </span>
-                </label>
-              ))
+                  </label>
+                );
+              })
             )}
           </div>
         </div>
