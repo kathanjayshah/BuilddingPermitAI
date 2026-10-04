@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, FileText, Highlighter, Sparkles } from "lucide-react";
+import { BookOpen, FileText, Sparkles } from "lucide-react";
 import { PageFrame } from "@/components/layout/page-frame";
 import { Badge } from "@/components/ui/badge";
 import { usePermits } from "@/hooks/use-permits";
@@ -12,7 +12,7 @@ const cards = [
   {
     href: "/permits",
     title: "Permits",
-    description: "Upload and manage permit PDFs",
+    description: "Upload and open permit PDFs",
     icon: FileText,
     key: "permits" as const,
   },
@@ -22,13 +22,6 @@ const cards = [
     description: "Paste, upload, or stub web norms",
     icon: BookOpen,
     key: "norms" as const,
-  },
-  {
-    href: "/viewer",
-    title: "PDF viewer",
-    description: "Open a permit and drag to highlight",
-    icon: Highlighter,
-    key: "viewer" as const,
   },
   {
     href: "/reviews",
@@ -47,7 +40,6 @@ export function DashboardPage() {
   const counts = {
     permits: permits.data?.length ?? 0,
     norms: norms.data?.length ?? 0,
-    viewer: permits.data?.length ?? 0,
     reviews: reviews.data?.length ?? 0,
   };
 

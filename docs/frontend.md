@@ -12,7 +12,7 @@
 
 ```text
 src/
-  app/(workspace)/     # Pages: /, /permits, /norms, /viewer, /reviews
+  app/(workspace)/     # Pages: /, /permits, /permits/[id], /norms, /reviews
   app/api/             # Thin route entrypoints → src/api/*
   api/                 # Request handlers (session, permits, norms, …)
   components/
@@ -70,8 +70,8 @@ Hooks call services and invalidate `queryKeys` from `src/lib/query-keys.ts`.
 ## Workspace UI
 
 - `WorkspaceShell`: sidebar + sticky page topbar + main
-- Sidebar: Dashboard, Permits, City norms, PDF viewer, Reviews; brand + email at bottom; collapsible
-- `PageTopbar`: title/description from `nav-items.ts` + TanStack sync status
+- Sidebar: Dashboard, Permits, City norms, Reviews; brand + email at bottom; collapsible
+- `PageTopbar`: title/description from `nav-items.ts` (on `/permits/[id]`, title is the file name)
 - Mock auth gate: any email → cookie `bpa_session_email` (httpOnly). Cookie value is stored as the raw email (do not double-`encodeURIComponent`)
 
 ## Pages
@@ -80,6 +80,6 @@ Hooks call services and invalidate `queryKeys` from `src/lib/query-keys.ts`.
 | --- | --- |
 | `/` | Dashboard counts / shortcuts |
 | `/permits` | TanStack Table of uploads + upload modal |
+| `/permits/[id]` | Open that PDF (scroll + highlights); no upload or dropdown |
 | `/norms` | Paste / upload / web stub norms |
-| `/viewer` | Fixed-height scrollable PDF + highlights |
 | `/reviews` | Stub permit-vs-norms review runs |

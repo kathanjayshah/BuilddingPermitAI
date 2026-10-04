@@ -45,7 +45,6 @@ type DragState = {
 
 type Props = {
   permitId: string | null;
-  fileName?: string;
 };
 
 function toPercentRect(
@@ -68,7 +67,7 @@ function toPercentRect(
   };
 }
 
-export function PermitPdfViewer({ permitId, fileName }: Props) {
+export function PermitPdfViewer({ permitId }: Props) {
   const [pageCount, setPageCount] = useState(0);
   const [note, setNote] = useState("Issue to review");
   const [drag, setDrag] = useState<DragState | null>(null);
@@ -194,16 +193,6 @@ export function PermitPdfViewer({ permitId, fileName }: Props) {
   return (
     <div className="grid h-full min-h-0 gap-3 sm:grid-cols-[minmax(0,1fr)_220px]">
       <div className="flex min-h-0 min-w-0 flex-col rounded-lg border bg-muted/20">
-        <div className="flex shrink-0 items-center justify-between gap-2 border-b px-3 py-2">
-          <p className="truncate text-sm font-medium">
-            {fileName ?? "Permit PDF"}
-          </p>
-          <p className="shrink-0 text-xs text-muted-foreground">
-            {pageCount ? `${pageCount} page${pageCount === 1 ? "" : "s"}` : "…"}
-            {" · "}scroll · drag to highlight
-          </p>
-        </div>
-
         <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto p-3">
           <Document
             file={fileUrlQuery.data}

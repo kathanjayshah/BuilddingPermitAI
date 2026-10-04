@@ -1,10 +1,13 @@
-# PDF viewer
+# PDF open view
 
-The permit viewer lives at `/viewer` (`src/components/pages/viewer-page.tsx` + `src/components/pdf/permit-pdf-viewer.tsx`).
+Open a permit from the Permits table. Route: `/permits/[id]` (`src/components/pages/permit-pdf-page.tsx` + `src/components/pdf/permit-pdf-viewer.tsx`).
+
+There is no separate "PDF viewer" nav item. Upload stays on `/permits` only.
 
 ## UX
 
-- Outer layout height is fixed (`h-[calc(100dvh-…)]`) so the page chrome stays put
+- Top bar title is the **file name**
+- Outer layout height is fixed so the page chrome stays put
 - All PDF pages render in one column inside a **scrollable** pane (no Prev/Next)
 - Drag on a page to create a highlight; notes list in the right sidebar
 - Page width follows the pane via `ResizeObserver`

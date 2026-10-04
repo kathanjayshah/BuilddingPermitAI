@@ -20,7 +20,6 @@ function formatBytes(bytes: number): string {
 export function PermitsPage() {
   const router = useRouter();
   const permitsQuery = usePermits(true);
-  const [message, setMessage] = useState<string | null>(null);
   const [uploadOpen, setUploadOpen] = useState(false);
 
   const columns = useMemo<ColumnDef<PermitRecord>[]>(
@@ -46,6 +45,10 @@ export function PermitsPage() {
     [],
   );
 
+  function openPermit(id: string) {
+    router.push(`/permits/${encodeURIComponent(id)}`);
+  }
+
   return (
     <PageFrame>
       <div className="flex justify-end">
@@ -54,28 +57,18 @@ export function PermitsPage() {
           Upload PDF
         </Button>
       </div>
-      {message ? (
-        <div className="rounded-lg border bg-muted/40 px-4 py-3 text-sm">
-          {message}
-        </div>
-      ) : null}
       <DataTable
         columns={columns}
         data={permitsQuery.data ?? []}
         isLoading={permitsQuery.isLoading}
         emptyMessage="No permits yet. Upload a PDF to get started."
         getRowId={(row) => row.id}
-        onRowClick={(row) =>
-          router.push(`/viewer?permitId=${encodeURIComponent(row.id)}`)
-        }
+        onRowClick={(row) => openPermit(row.id)}
       />
       <UploadPermitModal
         open={uploadOpen}
         onClose={() => setUploadOpen(false)}
-        onUploaded={(id) => {
-          setMessage("Permit uploaded.");
-          router.push(`/viewer?permitId=${encodeURIComponent(id)}`);
-        }}
+        onUploaded={(id) => openPermit(id)}
       />
     </PageFrame>
   );

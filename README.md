@@ -29,7 +29,7 @@ npm run db:migrate
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Sign in with any email, upload a PDF (stored in LocalStack), open **PDF viewer** to scroll pages and drag highlights.
+Open [http://localhost:3000](http://localhost:3000). Sign in with any email, upload a PDF (stored in LocalStack), then open a row on **Permits** to view and highlight it.
 
 More detail: [docs/docker-and-local.md](docs/docker-and-local.md), [docs/storage.md](docs/storage.md), [docs/pdf-viewer.md](docs/pdf-viewer.md).
 

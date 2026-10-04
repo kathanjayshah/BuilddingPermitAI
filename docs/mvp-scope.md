@@ -3,10 +3,10 @@
 ## Included
 
 - Open app, enter email, enter, mock session cookie, dashboard scoped to that email
-- Collapsible sidebar workspace: Dashboard, Permits, City norms, PDF viewer, Reviews
+- Collapsible sidebar workspace: Dashboard, Permits, City norms, Reviews
 - Permit PDF upload UI + API; bytes go to LocalStack S3; mock store keeps `storageKey` + `fileUrl` only
 - Same-origin `GET /api/permits/:id/file` proxy for the viewer
-- Scrollable fixed-height PDF viewer (react-pdf) with drag highlights
+- Open a permit from the table at `/permits/[id]` (react-pdf, scroll + highlights); file name in the top bar
 - PDF.js worker + WASM assets (`npm run pdfjs:assets` / postinstall)
 - Frontend `src/services/*` + TanStack Query hooks per API area
 - TanStack Table on list pages

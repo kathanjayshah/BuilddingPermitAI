@@ -1,7 +1,6 @@
 import {
   BookOpen,
   FileText,
-  Highlighter,
   LayoutDashboard,
   Sparkles,
   type LucideIcon,
@@ -20,39 +19,28 @@ export const navItems: NavItem[] = [
     href: "/",
     label: "Dashboard",
     title: "Dashboard",
-    description:
-      "Building Permit AI workspace. Use the sidebar to open each page.",
+    description: "Open permits, norms, and reviews from here.",
     icon: LayoutDashboard,
   },
   {
     href: "/permits",
     label: "Permits",
     title: "Permits",
-    description:
-      "Upload permit PDFs. Click a row to open it in the PDF viewer page.",
+    description: "Upload permit PDFs. Open a row to view the file.",
     icon: FileText,
   },
   {
     href: "/norms",
     label: "City norms",
     title: "City norms",
-    description:
-      "Attach city-norm context by paste, upload, or web-fetch stub.",
+    description: "Attach city-norm context by paste, upload, or web stub.",
     icon: BookOpen,
-  },
-  {
-    href: "/viewer",
-    label: "PDF viewer",
-    title: "PDF viewer",
-    description: "Scroll pages in a fixed pane, then drag to highlight.",
-    icon: Highlighter,
   },
   {
     href: "/reviews",
     label: "Reviews",
     title: "Reviews",
-    description:
-      "Select a permit and norms, then record a stub review run.",
+    description: "Select a permit and norms, then record a stub review run.",
     icon: Sparkles,
   },
 ];
@@ -65,4 +53,15 @@ export function isNavActive(pathname: string, href: string): boolean {
 export function getNavItemForPath(pathname: string): NavItem {
   const match = navItems.find((item) => isNavActive(pathname, item.href));
   return match ?? navItems[0]!;
+}
+
+/** `/permits/{id}` detail route — PDF open from the table. */
+export function getPermitIdFromPath(pathname: string): string | null {
+  const match = pathname.match(/^\/permits\/([^/]+)$/);
+  if (!match?.[1] || match[1] === "new") return null;
+  try {
+    return decodeURIComponent(match[1]);
+  } catch {
+    return match[1];
+  }
 }
