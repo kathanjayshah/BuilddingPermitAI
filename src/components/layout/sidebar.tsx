@@ -8,6 +8,7 @@ import { isNavActive, navItems } from "@/components/layout/nav-items";
 import { Button } from "@/components/ui/button";
 import { useSignOut } from "@/hooks/use-session";
 import { useSidebarCollapsed } from "@/hooks/use-sidebar-collapsed";
+import { SHELL_HEADER_HEIGHT_CLASS } from "@/components/layout/shell-header";
 
 type Props = {
   email: string;
@@ -28,7 +29,8 @@ export function Sidebar({ email }: Props) {
       <div
         className={cn(
           "flex items-center border-b",
-          collapsed ? "justify-center px-2 py-3" : "justify-between px-3 py-3",
+          SHELL_HEADER_HEIGHT_CLASS,
+          collapsed ? "justify-center px-2" : "justify-between px-3",
         )}
       >
         {!collapsed ? (
@@ -36,7 +38,9 @@ export function Sidebar({ email }: Props) {
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               Workspace
             </p>
-            <p className="mt-1 truncate text-sm font-semibold">Permit review</p>
+            <p className="truncate text-sm font-semibold leading-snug">
+              Permit review
+            </p>
           </div>
         ) : null}
         <Button
