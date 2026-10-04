@@ -25,6 +25,9 @@
 *.pem
 .tmp/
 
+# Editor-local AI config. Use AGENTS.md + docs/ instead (editor-neutral).
+.cursor/
+
 # Copied from pdfjs-dist on postinstall / npm run pdfjs:assets
 /public/pdfjs/
 

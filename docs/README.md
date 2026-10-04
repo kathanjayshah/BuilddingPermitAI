@@ -2,6 +2,8 @@
 
 All project writing lives in this folder. The root `README.md` is only a short quick start.
 
+`AGENTS.md` at the repo root is the editor-neutral entry for AI assistants. Prefer `docs/` + `AGENTS.md` over any vendor-only config folder.
+
 | Doc                                          | Purpose                                                         |
 | -------------------------------------------- | --------------------------------------------------------------- |
 | [repo-layout.md](./repo-layout.md)           | Folder structure (docs, prisma, docker, src)                    |
@@ -16,13 +18,8 @@ All project writing lives in this folder. The root `README.md` is only a short q
 | [database.md](./database.md)                 | Schema overview, ERD, migrate commands                          |
 | [docker-and-local.md](./docker-and-local.md) | Colima, Compose (Postgres + LocalStack), env, run instructions  |
 | [deployment.md](./deployment.md)             | Personal deploy path (Vercel + managed Postgres + real S3)      |
-| [commits.md](./commits.md)                   | Conventional Commits format + examples                          |
-
-Agent rules (not under `docs/`):
-
-- `.cursor/rules/asd-ste100.mdc` — reply in ASD-STE100 each time
-- `.cursor/skills/commit/SKILL.md` — commit message workflow
-- `AGENTS.md` — Next.js notes + project agent pointers
+| [commits.md](./commits.md)                   | Conventional Commits format + agent commit workflow             |
+| [agent-style.md](./agent-style.md)           | ASD-STE100 reply style for AI assistants                        |
 
 Related code folders (not docs):
 
@@ -33,3 +30,4 @@ Related code folders (not docs):
 - `src/lib/storage/` for S3 helpers
 - `src/services/` for frontend API clients
 - `scripts/copy-pdfjs-assets.mjs` for PDF.js WASM/cmaps copy
+- `AGENTS.md` for editor-neutral AI instructions

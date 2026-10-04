@@ -1,8 +1,8 @@
 # Commit messages
 
-This repo uses **Conventional Commits** so history stays scannable and agents can draft messages the same way every time.
+This repo uses **Conventional Commits**. Humans and any AI assistant follow this file. It is editor-neutral.
 
-Canonical agent workflow: `.cursor/skills/commit/SKILL.md` (invoke with the commit skill / ask to commit).
+Entry for agents: [`AGENTS.md`](../AGENTS.md) → this guide.
 
 ## Format
 
@@ -36,8 +36,6 @@ Rules:
 | `perf`     | Performance improvement |
 
 ## Scopes (optional, lowercase)
-
-Use a short area name when it helps:
 
 | Scope       | Examples |
 | ----------- | -------- |
@@ -103,11 +101,35 @@ Do **not** commit `.env.local` or secrets. `.env.example` is fine.
 
 ## How to commit (agents)
 
-1. Read `.cursor/skills/commit/SKILL.md` and follow it.
-2. Only commit when the user explicitly asks.
-3. Draft the message from the **diff**, using the types above.
-4. Prefer HEREDOC for the message (see skill).
-5. Never amend a pushed commit; never `--no-verify` unless asked.
+Hard rules:
+
+- Only create a commit when the user **explicitly** asks to commit.
+- Never update git config.
+- Never commit `.env.local`, credentials, or secrets (`.env.example` is OK).
+- Never `--no-verify` / skip hooks unless the user asks.
+- Never amend unless the user asks and amend safety rules allow it.
+- Never force-push or run destructive git commands unless the user asks.
+
+Workflow:
+
+1. Run in parallel: `git status`, `git diff`, `git diff --staged`, `git log -5 --oneline`
+2. Choose `type` / optional `scope` from the diff.
+3. Draft subject + optional body (match recent log tone if history exists).
+4. Stage relevant files only. Do not stage secrets.
+5. Commit with HEREDOC:
+
+```bash
+git commit -m "$(cat <<'EOF'
+type(scope): summary
+
+Optional body.
+
+EOF
+)"
+```
+
+6. Run `git status` to confirm success.
+7. If a hook rejects the commit, fix and create a **new** commit (do not amend unless allowed).
 
 ## Suggested message for the current MVP tree
 

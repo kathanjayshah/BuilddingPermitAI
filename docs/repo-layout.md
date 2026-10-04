@@ -25,9 +25,7 @@ docker-compose.yml        # Thin include of docker/docker-compose.yml
 scripts/
   copy-pdfjs-assets.mjs   # npm run pdfjs:assets / postinstall
 
-.cursor/skills/
-  commit/SKILL.md         # Conventional Commits workflow for agents
-AGENTS.md                 # Next.js agent rules + commit pointers
+AGENTS.md                 # Editor-neutral AI entry (style + commits + docs links)
 
 public/
   pdf.worker.min.mjs      # PDF.js worker (committed)

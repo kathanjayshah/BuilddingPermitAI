@@ -10,11 +10,13 @@ This block is written and re-added by `next dev`. Verify at `node_modules/next/d
 
 # Building Permit AI — agent notes
 
+This file is the **editor-neutral** entry for AI assistants (Cursor, VS Code, Claude Code, Copilot, Zed, and others). Project rules live in `docs/`, not in a vendor-only folder.
+
 ## Response language (required)
 
 Write every chat reply in **ASD-STE100** (Simplified Technical English).
 
-Rule file (always on): [`.cursor/rules/asd-ste100.mdc`](.cursor/rules/asd-ste100.mdc)
+Full guide: [`docs/agent-style.md`](docs/agent-style.md)
 
 - Use short sentences and active voice.
 - Use simple words. Do not use slang or idioms.
@@ -22,11 +24,11 @@ Rule file (always on): [`.cursor/rules/asd-ste100.mdc`](.cursor/rules/asd-ste100
 
 ## Docs
 
-Project documentation lives in [`docs/`](docs/README.md). Prefer updating those docs when behavior or setup changes.
+Project documentation: [`docs/README.md`](docs/README.md). Update docs when behavior or setup changes.
 
 ## Commits
 
-Use **Conventional Commits** for every commit in this repo:
+Use **Conventional Commits**:
 
 ```text
 <type>(optional-scope): <imperative summary>
@@ -34,10 +36,6 @@ Use **Conventional Commits** for every commit in this repo:
 
 Types: `feat` · `fix` · `docs` · `chore` · `refactor` · `style` · `test` · `perf`
 
-Full guide: [`docs/commits.md`](docs/commits.md)
-
-When the user asks to commit or draft a commit message, **read and follow** the project skill:
-
-[`.cursor/skills/commit/SKILL.md`](.cursor/skills/commit/SKILL.md)
+When the user asks to commit or draft a commit message, **read and follow** [`docs/commits.md`](docs/commits.md).
 
 Only commit when the user explicitly asks. Never commit `.env.local` or secrets.
