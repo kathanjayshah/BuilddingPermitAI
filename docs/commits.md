@@ -24,31 +24,31 @@ Rules:
 
 ## Types
 
-| Type       | Use when |
-| ---------- | -------- |
-| `feat`     | New user-facing capability or meaningful API/UI feature |
-| `fix`      | Bug fix (wrong behavior, blank PDF, broken upload, …) |
-| `docs`     | Documentation only |
+| Type       | Use when                                                    |
+| ---------- | ----------------------------------------------------------- |
+| `feat`     | New user-facing capability or meaningful API/UI feature     |
+| `fix`      | Bug fix (wrong behavior, blank PDF, broken upload, …)       |
+| `docs`     | Documentation only                                          |
 | `chore`    | Tooling, deps, Compose, scripts, ignore files, housekeeping |
-| `refactor` | Code change with no intended behavior change |
-| `style`    | Formatting only (Prettier); no logic change |
-| `test`     | Adding or updating tests |
-| `perf`     | Performance improvement |
+| `refactor` | Code change with no intended behavior change                |
+| `style`    | Formatting only (Prettier); no logic change                 |
+| `test`     | Adding or updating tests                                    |
+| `perf`     | Performance improvement                                     |
 
 ## Scopes (optional, lowercase)
 
-| Scope       | Examples |
-| ----------- | -------- |
-| `permits`   | Upload, list, permit APIs |
-| `viewer`    | PDF viewer, highlights |
-| `storage`   | S3 / LocalStack / proxy |
-| `auth`      | Session cookie / gate |
-| `norms`     | City norms |
-| `reviews`   | Stub review runs |
-| `db`        | Prisma / migrations |
-| `docker`    | Compose / Colima |
-| `ui`        | Layout, sidebar, shared components |
-| `deps`      | Dependency bumps |
+| Scope     | Examples                           |
+| --------- | ---------------------------------- |
+| `permits` | Upload, list, permit APIs          |
+| `viewer`  | PDF viewer, highlights             |
+| `storage` | S3 / LocalStack / proxy            |
+| `auth`    | Session cookie / gate              |
+| `norms`   | City norms                         |
+| `reviews` | Stub review runs                   |
+| `db`      | Prisma / migrations                |
+| `docker`  | Compose / Colima                   |
+| `ui`      | Layout, sidebar, shared components |
+| `deps`    | Dependency bumps                   |
 
 Omit scope when the change spans many areas (e.g. initial MVP).
 

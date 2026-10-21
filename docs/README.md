@@ -4,24 +4,24 @@ All project writing lives in this folder. The root `README.md` is only a short q
 
 `AGENTS.md` at the repo root is the editor-neutral entry for AI assistants. Prefer `docs/` + `AGENTS.md` over any vendor-only config folder.
 
-| Doc                                          | Purpose                                                         |
-| -------------------------------------------- | --------------------------------------------------------------- |
-| [repo-layout.md](./repo-layout.md)           | Folder structure (docs, prisma, docker, src)                    |
-| [project-context.md](./project-context.md)   | Goals, constraints, and key decisions                           |
-| [mvp-scope.md](./mvp-scope.md)               | Includes and excludes for this pass                             |
-| [frontend.md](./frontend.md)                 | Services, hooks, TanStack, workspace UI                         |
-| [api.md](./api.md)                           | HTTP endpoints                                                  |
-| [storage.md](./storage.md)                   | LocalStack / S3, PDF proxy, env vars                            |
-| [pdf-viewer.md](./pdf-viewer.md)             | react-pdf, WASM assets, scrollable viewer, highlights           |
+| Doc                                          | Purpose                                                          |
+| -------------------------------------------- | ---------------------------------------------------------------- |
+| [repo-layout.md](./repo-layout.md)           | Folder structure (docs, prisma, docker, src)                     |
+| [project-context.md](./project-context.md)   | Goals, constraints, and key decisions                            |
+| [mvp-scope.md](./mvp-scope.md)               | Includes and excludes for this pass                              |
+| [frontend.md](./frontend.md)                 | Services, hooks, TanStack, workspace UI                          |
+| [api.md](./api.md)                           | HTTP endpoints                                                   |
+| [storage.md](./storage.md)                   | LocalStack / S3, PDF proxy, env vars                             |
+| [pdf-viewer.md](./pdf-viewer.md)             | react-pdf, WASM assets, scrollable viewer, highlights            |
 | [ai-architecture.md](./ai-architecture.md)   | AI review design: glossary, providers, local then AWS, RAG later |
-| [ai-test-plan.md](./ai-test-plan.md)         | Checklist to test stub / local AI / Textract+Bedrock / RAG      |
-| [plans/](./plans/README.md)                  | Saved plans for later review (AI local-first AWS-ready, …)      |
-| [prisma.md](./prisma.md)                     | Prisma ORM workflow, client, sequential migrations              |
-| [database.md](./database.md)                 | Schema overview, ERD, migrate commands                          |
-| [docker-and-local.md](./docker-and-local.md) | Colima, Compose (Postgres + LocalStack), env, run instructions  |
-| [deployment.md](./deployment.md)             | Personal deploy path (Vercel + managed Postgres + real S3)      |
-| [commits.md](./commits.md)                   | Conventional Commits format + agent commit workflow             |
-| [agent-style.md](./agent-style.md)           | ASD-STE100 reply style for AI assistants                        |
+| [ai-test-plan.md](./ai-test-plan.md)         | Checklist to test stub / local AI / Textract+Bedrock / RAG       |
+| [plans/](./plans/README.md)                  | Saved plans for later review (AI local-first AWS-ready, …)       |
+| [prisma.md](./prisma.md)                     | Prisma ORM workflow, client, sequential migrations               |
+| [database.md](./database.md)                 | Schema overview, ERD, migrate commands                           |
+| [docker-and-local.md](./docker-and-local.md) | Colima, Compose (Postgres + LocalStack), env, run instructions   |
+| [deployment.md](./deployment.md)             | Personal deploy path (Vercel + managed Postgres + real S3)       |
+| [commits.md](./commits.md)                   | Conventional Commits format + agent commit workflow              |
+| [agent-style.md](./agent-style.md)           | ASD-STE100 reply style for AI assistants                         |
 
 Related code folders (not docs):
 

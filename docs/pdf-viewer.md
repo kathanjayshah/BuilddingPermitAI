@@ -23,11 +23,11 @@ See [storage.md](./storage.md) for why we proxy instead of using the raw S3 URL.
 
 ## react-pdf / PDF.js setup
 
-| Piece | Location |
-| --- | --- |
-| Library | `react-pdf` (depends on `pdfjs-dist`) |
-| Worker | `/public/pdf.worker.min.mjs` (copied from `pdfjs-dist`) |
-| WASM / cmaps / fonts / ICC | `/public/pdfjs/*` (copied by script) |
+| Piece                      | Location                                                |
+| -------------------------- | ------------------------------------------------------- |
+| Library                    | `react-pdf` (depends on `pdfjs-dist`)                   |
+| Worker                     | `/public/pdf.worker.min.mjs` (copied from `pdfjs-dist`) |
+| WASM / cmaps / fonts / ICC | `/public/pdfjs/*` (copied by script)                    |
 
 Worker is set once:
 

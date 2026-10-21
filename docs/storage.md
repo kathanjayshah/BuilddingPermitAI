@@ -32,14 +32,14 @@ Do **not** point react-pdf at the raw LocalStack/S3 URL (`localhost:4566`). Cros
 
 ### Code map
 
-| Piece | Path |
-| --- | --- |
-| S3 client + upload/get | `src/lib/storage/s3.ts` |
-| Create permit + first doc | `src/api/permits.ts` |
-| Add doc to permit | `src/api/permit-documents.ts` |
-| File proxy / meta | `src/api/document-file.ts` |
-| Frontend helpers | `src/services/permits-service.ts` |
-| Viewer hook | `src/hooks/use-permits.ts` → `useDocumentFileUrl` |
+| Piece                     | Path                                              |
+| ------------------------- | ------------------------------------------------- |
+| S3 client + upload/get    | `src/lib/storage/s3.ts`                           |
+| Create permit + first doc | `src/api/permits.ts`                              |
+| Add doc to permit         | `src/api/permit-documents.ts`                     |
+| File proxy / meta         | `src/api/document-file.ts`                        |
+| Frontend helpers          | `src/services/permits-service.ts`                 |
+| Viewer hook               | `src/hooks/use-permits.ts` → `useDocumentFileUrl` |
 
 Object key shape:
 
@@ -51,14 +51,14 @@ permits/{email}/{permitId}/{documentId}/{originalFileName}
 
 We mimic S3 locally with **LocalStack** in Colima/Compose. Same AWS SDK code works against real AWS later by swapping env vars.
 
-| Piece | Value |
-| --- | --- |
-| Image | `localstack/localstack:3` |
-| Endpoint | `http://localhost:4566` |
-| Access key / secret | `test` / `test` |
-| Bucket | `bpa-permits` (created by init script) |
-| Example object URL | `http://localhost:4566/bpa-permits/permits/.../file.pdf` |
-| Init script | `docker/localstack-init/01-create-bucket.sh` |
+| Piece               | Value                                                    |
+| ------------------- | -------------------------------------------------------- |
+| Image               | `localstack/localstack:3`                                |
+| Endpoint            | `http://localhost:4566`                                  |
+| Access key / secret | `test` / `test`                                          |
+| Bucket              | `bpa-permits` (created by init script)                   |
+| Example object URL  | `http://localhost:4566/bpa-permits/permits/.../file.pdf` |
+| Init script         | `docker/localstack-init/01-create-bucket.sh`             |
 
 Init creates the bucket, sets CORS for `localhost:3000`, and applies a public-read GetObject policy (handy for debugging; the app still uses the proxy).
 
@@ -86,13 +86,13 @@ S3_BUCKET=bpa-permits
 S3_PUBLIC_URL=http://localhost:4566
 ```
 
-| Variable | Purpose |
-| --- | --- |
-| `S3_ENDPOINT` | SDK endpoint (LocalStack or custom S3-compatible API) |
-| `S3_REGION` | Region string (LocalStack ignores; AWS needs a real one) |
-| `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` | Credentials |
-| `S3_BUCKET` | Bucket name |
-| `S3_PUBLIC_URL` | Base used when building stored `fileUrl` metadata |
+| Variable                                    | Purpose                                                  |
+| ------------------------------------------- | -------------------------------------------------------- |
+| `S3_ENDPOINT`                               | SDK endpoint (LocalStack or custom S3-compatible API)    |
+| `S3_REGION`                                 | Region string (LocalStack ignores; AWS needs a real one) |
+| `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` | Credentials                                              |
+| `S3_BUCKET`                                 | Bucket name                                              |
+| `S3_PUBLIC_URL`                             | Base used when building stored `fileUrl` metadata        |
 
 `src/lib/storage/s3.ts` uses `forcePathStyle: true` so LocalStack path-style URLs work (`/{bucket}/{key}`).
 

@@ -53,8 +53,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "File is empty." }, { status: 400 });
   }
 
-  const title =
-    typeof titleInput === "string" ? titleInput.trim() : "";
+  const title = typeof titleInput === "string" ? titleInput.trim() : "";
   if (!title) {
     return NextResponse.json(
       { error: "Permit title is required." },
@@ -74,7 +73,8 @@ export async function POST(request: Request) {
   const permitId = createId("permit");
   const documentId = createId("doc");
   const mimeType =
-    file.type || (kind === "pdf" ? "application/pdf" : "application/octet-stream");
+    file.type ||
+    (kind === "pdf" ? "application/pdf" : "application/octet-stream");
   const bytes = Buffer.from(await file.arrayBuffer());
   const storageKey = `permits/${email}/${permitId}/${documentId}/${file.name}`;
 

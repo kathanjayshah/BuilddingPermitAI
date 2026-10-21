@@ -15,15 +15,15 @@ Build already runs `postinstall` → `prisma generate` + `pdfjs:assets`. Ensure 
 
 ## Environment variables (production)
 
-| Variable | Notes |
-| --- | --- |
-| `DATABASE_URL` | Managed Postgres with pgvector |
-| `S3_ENDPOINT` | Omit for AWS; set for R2 / custom endpoints |
-| `S3_REGION` | Real AWS region (or provider equivalent) |
-| `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` | Bucket credentials |
-| `S3_BUCKET` | Production bucket name |
-| `S3_PUBLIC_URL` | Public/CDN base if you expose objects; otherwise keep using the app proxy |
-| Clerk keys (later) | When replacing mock session |
+| Variable                                    | Notes                                                                     |
+| ------------------------------------------- | ------------------------------------------------------------------------- |
+| `DATABASE_URL`                              | Managed Postgres with pgvector                                            |
+| `S3_ENDPOINT`                               | Omit for AWS; set for R2 / custom endpoints                               |
+| `S3_REGION`                                 | Real AWS region (or provider equivalent)                                  |
+| `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` | Bucket credentials                                                        |
+| `S3_BUCKET`                                 | Production bucket name                                                    |
+| `S3_PUBLIC_URL`                             | Public/CDN base if you expose objects; otherwise keep using the app proxy |
+| Clerk keys (later)                          | When replacing mock session                                               |
 
 LocalStack values (`test` / `localhost:4566`) must **not** be used in production.
 

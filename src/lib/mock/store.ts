@@ -54,7 +54,9 @@ export function addPermit(
 }
 
 export function getPermit(email: string, id: string): PermitRecord | undefined {
-  const permit = getStore().permits.find((p) => p.email === email && p.id === id);
+  const permit = getStore().permits.find(
+    (p) => p.email === email && p.id === id,
+  );
   return permit ? withDocuments(permit) : undefined;
 }
 
