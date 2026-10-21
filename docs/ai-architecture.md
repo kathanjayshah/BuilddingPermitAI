@@ -10,28 +10,28 @@ Design for comparing a building permit document to selected city norms with an L
 
 ## Status today
 
-| Piece | Status |
-| --- | --- |
-| Permit PDF upload + viewer + highlights | Done (MVP) |
-| City norms (paste / upload / web stub) | Done (MVP) |
-| Stub review run (`permitId` + `normIds`) | Done (no extract, no LLM) |
-| Extract + LLM providers | Designed; not implemented |
-| Amazon Textract / Bedrock | Designed as Phase B swap-in |
-| RAG + pgvector retrieval | Designed as Phase C; Compose already enables pgvector |
+| Piece                                    | Status                                                |
+| ---------------------------------------- | ----------------------------------------------------- |
+| Permit PDF upload + viewer + highlights  | Done (MVP)                                            |
+| City norms (paste / upload / web stub)   | Done (MVP)                                            |
+| Stub review run (`permitId` + `normIds`) | Done (no extract, no LLM)                             |
+| Extract + LLM providers                  | Designed; not implemented                             |
+| Amazon Textract / Bedrock                | Designed as Phase B swap-in                           |
+| RAG + pgvector retrieval                 | Designed as Phase C; Compose already enables pgvector |
 
 ## Glossary
 
-| Term | What it is | Role in this app |
-| --- | --- | --- |
-| **Extract / OCR** | Turn a digital or scanned PDF into text (and sometimes page geometry) | Feed the model the permit content |
-| **Amazon Textract** | AWS document OCR API | Production extract provider (Phase B) |
-| **LLM** | Large language model that reasons over packed text | Compare permit text vs norms; return findings |
-| **Amazon Bedrock** | AWS managed API to call models (for example Claude) without self-hosting | Production LLM provider (Phase B) |
-| **Prompt packing** | Put extracted permit text + selected norm text into one prompt (or a small message set) | Phase A and Phase B default |
-| **RAG** | Retrieval-augmented generation: chunk docs, embed vectors, retrieve only relevant passages | Phase C when norms are too large to paste |
-| **Embeddings** | Numeric vectors for text chunks | Used only in the RAG phase |
-| **pgvector** | Postgres extension for vector similarity search | Store embeddings in the same DB you already run |
-| **Provider interface** | Small TypeScript contract with swappable implementations | Lets local and AWS backends share one pipeline |
+| Term                   | What it is                                                                                 | Role in this app                                |
+| ---------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| **Extract / OCR**      | Turn a digital or scanned PDF into text (and sometimes page geometry)                      | Feed the model the permit content               |
+| **Amazon Textract**    | AWS document OCR API                                                                       | Production extract provider (Phase B)           |
+| **LLM**                | Large language model that reasons over packed text                                         | Compare permit text vs norms; return findings   |
+| **Amazon Bedrock**     | AWS managed API to call models (for example Claude) without self-hosting                   | Production LLM provider (Phase B)               |
+| **Prompt packing**     | Put extracted permit text + selected norm text into one prompt (or a small message set)    | Phase A and Phase B default                     |
+| **RAG**                | Retrieval-augmented generation: chunk docs, embed vectors, retrieve only relevant passages | Phase C when norms are too large to paste       |
+| **Embeddings**         | Numeric vectors for text chunks                                                            | Used only in the RAG phase                      |
+| **pgvector**           | Postgres extension for vector similarity search                                            | Store embeddings in the same DB you already run |
+| **Provider interface** | Small TypeScript contract with swappable implementations                                   | Lets local and AWS backends share one pipeline  |
 
 ## End-to-end pipeline
 
@@ -55,11 +55,11 @@ Steps (same booking the stub already records):
 
 ## Decision: local-first, then AWS, then RAG
 
-| Phase | Name | Extract | LLM | When |
-| --- | --- | --- | --- | --- |
-| **A** | Local-first | Local PDF text extract (digital PDFs) | Local or cheap gateway model behind `LlmProvider` | First real AI loop; no AWS required |
-| **B** | AWS production shape | Amazon Textract | Amazon Bedrock | Scanned permits + managed models |
-| **C** | RAG | Same as A/B | Same as A/B + retrieved chunks | Selected norms routinely overflow context |
+| Phase | Name                 | Extract                               | LLM                                               | When                                      |
+| ----- | -------------------- | ------------------------------------- | ------------------------------------------------- | ----------------------------------------- |
+| **A** | Local-first          | Local PDF text extract (digital PDFs) | Local or cheap gateway model behind `LlmProvider` | First real AI loop; no AWS required       |
+| **B** | AWS production shape | Amazon Textract                       | Amazon Bedrock                                    | Scanned permits + managed models          |
+| **C** | RAG                  | Same as A/B                           | Same as A/B + retrieved chunks                    | Selected norms routinely overflow context |
 
 Keep **extract + pack selected norms** until corpora force RAG. Explicit norm selection is easier to debug and keeps the product honest about what was reviewed.
 

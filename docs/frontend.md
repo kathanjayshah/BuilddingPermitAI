@@ -42,15 +42,15 @@ src/
 
 Components and hooks must not scatter raw `fetch` calls. Each API area has a service under `src/services/`:
 
-| File | Responsibility |
-| --- | --- |
-| `http.ts` | Shared `apiJson` + `ApiError` |
-| `session-service.ts` | `GET/POST/DELETE /api/session` |
-| `permits-service.ts` | list/upload permits; file proxy path + meta |
-| `norms-service.ts` | list/create norms |
-| `reviews-service.ts` | list/create stub review runs |
-| `highlights-service.ts` | list/create/delete PDF highlights |
-| `index.ts` | Re-exports |
+| File                    | Responsibility                              |
+| ----------------------- | ------------------------------------------- |
+| `http.ts`               | Shared `apiJson` + `ApiError`               |
+| `session-service.ts`    | `GET/POST/DELETE /api/session`              |
+| `permits-service.ts`    | list/upload permits; file proxy path + meta |
+| `norms-service.ts`      | list/create norms                           |
+| `reviews-service.ts`    | list/create stub review runs                |
+| `highlights-service.ts` | list/create/delete PDF highlights           |
+| `index.ts`              | Re-exports                                  |
 
 Example:
 
@@ -64,14 +64,14 @@ const meta = await permitsService.getFile(permitId); // { url, storageKey, … }
 
 ## Hooks
 
-| Hook file | Typical exports |
-| --- | --- |
-| `use-session.ts` | session query, sign-in/out mutations |
-| `use-permits.ts` | `usePermits`, `useUploadPermit`, `usePermitFileUrl` |
-| `use-norms.ts` | list + create |
-| `use-reviews.ts` | list + create stub run |
-| `use-highlights.ts` | list/create/delete by permit |
-| `use-sidebar-collapsed.ts` | local UI preference |
+| Hook file                  | Typical exports                                     |
+| -------------------------- | --------------------------------------------------- |
+| `use-session.ts`           | session query, sign-in/out mutations                |
+| `use-permits.ts`           | `usePermits`, `useUploadPermit`, `usePermitFileUrl` |
+| `use-norms.ts`             | list + create                                       |
+| `use-reviews.ts`           | list + create stub run                              |
+| `use-highlights.ts`        | list/create/delete by permit                        |
+| `use-sidebar-collapsed.ts` | local UI preference                                 |
 
 Hooks call services and invalidate `queryKeys` from `src/lib/query-keys.ts`.
 
@@ -84,10 +84,10 @@ Hooks call services and invalidate `queryKeys` from `src/lib/query-keys.ts`.
 
 ## Pages
 
-| Route | Purpose |
-| --- | --- |
-| `/` | Dashboard counts / shortcuts |
-| `/permits` | TanStack Table of permit cases + create (upload first document) |
-| `/permits/[id]` | Permit title in header; pick/add documents; open PDF or image |
-| `/norms` | Paste / upload / web stub norms |
-| `/reviews` | Stub permit-vs-norms review runs |
+| Route           | Purpose                                                         |
+| --------------- | --------------------------------------------------------------- |
+| `/`             | Dashboard counts / shortcuts                                    |
+| `/permits`      | TanStack Table of permit cases + create (upload first document) |
+| `/permits/[id]` | Permit title in header; pick/add documents; open PDF or image   |
+| `/norms`        | Paste / upload / web stub norms                                 |
+| `/reviews`      | Stub permit-vs-norms review runs                                |

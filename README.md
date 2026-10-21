@@ -35,29 +35,29 @@ More detail: [docs/docker-and-local.md](docs/docker-and-local.md), [docs/storage
 
 ## Scripts
 
-| Command                  | Description                                              |
-| ------------------------ | -------------------------------------------------------- |
-| `npm run dev`            | Next.js dev server                                       |
-| `npm run build`          | Production build                                         |
-| `npm run format`         | Format the repo with Prettier                            |
-| `npm run format:check`   | Check formatting without writing                         |
-| `npm run docker:up`      | Start Postgres + LocalStack via Compose                  |
-| `npm run docker:down`    | Stop Compose services                                    |
-| `npm run db:migrate`     | Apply Prisma migrations                                  |
-| `npm run db:migrate:dev` | Create/apply migrations while developing                 |
+| Command                  | Description                                               |
+| ------------------------ | --------------------------------------------------------- |
+| `npm run dev`            | Next.js dev server                                        |
+| `npm run build`          | Production build                                          |
+| `npm run format`         | Format the repo with Prettier                             |
+| `npm run format:check`   | Check formatting without writing                          |
+| `npm run docker:up`      | Start Postgres + LocalStack via Compose                   |
+| `npm run docker:down`    | Stop Compose services                                     |
+| `npm run db:migrate`     | Apply Prisma migrations                                   |
+| `npm run db:migrate:dev` | Create/apply migrations while developing                  |
 | `npm run db:reset`       | Wipe Compose volumes (DB **and** LocalStack) + re-migrate |
-| `npm run db:studio`      | Open Prisma Studio                                       |
-| `npm run pdfjs:assets`   | Copy PDF.js wasm/cmaps/fonts into `public/pdfjs/`        |
+| `npm run db:studio`      | Open Prisma Studio                                        |
+| `npm run pdfjs:assets`   | Copy PDF.js wasm/cmaps/fonts into `public/pdfjs/`         |
 
 ## Docs
 
-| Path                                                         | Contents                              |
-| ------------------------------------------------------------ | ------------------------------------- |
-| [`docs/`](docs/README.md)                                    | All guides and design notes           |
-| [`docs/storage.md`](docs/storage.md)                         | LocalStack / S3 + PDF proxy           |
-| [`docs/frontend.md`](docs/frontend.md)                       | Services, hooks, workspace UI         |
-| [`docs/pdf-viewer.md`](docs/pdf-viewer.md)                   | react-pdf, WASM, scrollable viewer    |
-| [`docs/api.md`](docs/api.md)                                 | HTTP endpoints                        |
-| [`prisma/`](prisma/)                                         | Prisma schema + sequential migrations |
-| [`docs/prisma.md`](docs/prisma.md)                           | Prisma workflow guide                 |
-| [`docker/`](docker/)                                         | Compose (Postgres + LocalStack)       |
+| Path                                       | Contents                              |
+| ------------------------------------------ | ------------------------------------- |
+| [`docs/`](docs/README.md)                  | All guides and design notes           |
+| [`docs/storage.md`](docs/storage.md)       | LocalStack / S3 + PDF proxy           |
+| [`docs/frontend.md`](docs/frontend.md)     | Services, hooks, workspace UI         |
+| [`docs/pdf-viewer.md`](docs/pdf-viewer.md) | react-pdf, WASM, scrollable viewer    |
+| [`docs/api.md`](docs/api.md)               | HTTP endpoints                        |
+| [`prisma/`](prisma/)                       | Prisma schema + sequential migrations |
+| [`docs/prisma.md`](docs/prisma.md)         | Prisma workflow guide                 |
+| [`docker/`](docker/)                       | Compose (Postgres + LocalStack)       |

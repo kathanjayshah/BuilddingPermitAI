@@ -98,7 +98,9 @@ function PermitDocumentTopbar({ permitId }: { permitId: string }) {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3">
         <div className="flex min-w-0 flex-1 flex-wrap items-end gap-3">
           <div className="min-w-0 space-y-1">
-            <p className="text-xs font-medium text-muted-foreground">Document</p>
+            <p className="text-xs font-medium text-muted-foreground">
+              Document
+            </p>
             <Select
               value={selectedDocId ?? null}
               onValueChange={(value) => {

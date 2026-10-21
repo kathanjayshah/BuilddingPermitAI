@@ -53,11 +53,11 @@ EXTRACT_PROVIDER=local|textract
 LLM_PROVIDER=local|bedrock
 ```
 
-| Phase | Extract | LLM |
-| --- | --- | --- |
-| A | Local PDF text | Local / cheap gateway |
-| B | Amazon Textract | Amazon Bedrock |
-| C | Same as A/B | Same + retrieved norm chunks (RAG) |
+| Phase | Extract         | LLM                                |
+| ----- | --------------- | ---------------------------------- |
+| A     | Local PDF text  | Local / cheap gateway              |
+| B     | Amazon Textract | Amazon Bedrock                     |
+| C     | Same as A/B     | Same + retrieved norm chunks (RAG) |
 
 ## Implementation order (after docs)
 
