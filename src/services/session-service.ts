@@ -12,5 +12,6 @@ export const sessionService = {
       body: JSON.stringify({ email }),
     }),
 
-  signOut: () => apiJson<{ ok: boolean }>("/api/session", { method: "DELETE" }),
+  signOut: () =>
+    apiJson<{ ok: boolean }>("/api/session", { method: "DELETE" }),
 };

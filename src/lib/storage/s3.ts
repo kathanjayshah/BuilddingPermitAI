@@ -23,9 +23,10 @@ export function getS3Config() {
     accessKeyId: requiredEnv("S3_ACCESS_KEY_ID"),
     secretAccessKey: requiredEnv("S3_SECRET_ACCESS_KEY"),
     bucket: requiredEnv("S3_BUCKET"),
-    publicUrl: (
-      process.env.S3_PUBLIC_URL ?? requiredEnv("S3_ENDPOINT")
-    ).replace(/\/$/, ""),
+    publicUrl: (process.env.S3_PUBLIC_URL ?? requiredEnv("S3_ENDPOINT")).replace(
+      /\/$/,
+      "",
+    ),
   };
 }
 
