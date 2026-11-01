@@ -8,6 +8,9 @@ import { isNavActive, navItems } from "@/components/layout/nav-items";
 import { Button } from "@/components/ui/button";
 import { useSignOut } from "@/hooks/use-session";
 import { useSidebarCollapsed } from "@/hooks/use-sidebar-collapsed";
+import { usePermits } from "@/hooks/use-permits";
+import { useNorms } from "@/hooks/use-norms";
+import { useReviews } from "@/hooks/use-reviews";
 import { SHELL_HEADER_HEIGHT_CLASS } from "@/components/layout/shell-header";
 
 type Props = {
@@ -18,6 +21,15 @@ export function Sidebar({ email }: Props) {
   const pathname = usePathname();
   const signOut = useSignOut();
   const { collapsed, toggle } = useSidebarCollapsed();
+
+  const permits = usePermits(true);
+  const norms = useNorms(true);
+  const reviews = useReviews(true);
+  const counts: Record<string, number | undefined> = {
+    "/permits": permits.data?.length,
+    "/norms": norms.data?.length,
+    "/reviews": reviews.data?.length,
+  };
 
   return (
     <aside
@@ -35,12 +47,10 @@ export function Sidebar({ email }: Props) {
       >
         {!collapsed ? (
           <div className="min-w-0">
-            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              Workspace
+            <p className="truncate text-sm font-semibold leading-snug tracking-tight">
+              Building Permit AI
             </p>
-            <p className="truncate text-sm font-semibold leading-snug">
-              Permit review
-            </p>
+            <p className="text-xs text-muted-foreground">Permit review</p>
           </div>
         ) : null}
         <Button
@@ -60,14 +70,12 @@ export function Sidebar({ email }: Props) {
       </div>
 
       <nav
-        className={cn(
-          "flex flex-1 flex-col gap-1",
-          collapsed ? "p-2" : "p-3",
-        )}
+        className={cn("flex flex-1 flex-col gap-1", collapsed ? "p-2" : "p-3")}
       >
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isNavActive(pathname, item.href);
+          const count = counts[item.href];
           return (
             <Link
               key={item.href}
@@ -82,44 +90,42 @@ export function Sidebar({ email }: Props) {
               )}
             >
               <Icon className="size-4 shrink-0" />
-              {!collapsed ? <span>{item.label}</span> : null}
+              {!collapsed ? <span className="flex-1">{item.label}</span> : null}
+              {!collapsed && count != null ? (
+                <span className="text-xs tabular-nums text-muted-foreground">
+                  {count}
+                </span>
+              ) : null}
             </Link>
           );
         })}
       </nav>
 
-      <div
-        className={cn(
-          "mt-auto space-y-3 border-t",
-          collapsed ? "p-2" : "p-3",
-        )}
-      >
+      <div className={cn("mt-auto border-t", collapsed ? "p-2" : "p-3")}>
         {!collapsed ? (
-          <>
-            <div>
-              <p className="text-sm font-semibold tracking-tight">
-                Building Permit AI
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Review permits against city norms
-              </p>
+          <div className="flex items-center gap-2">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary uppercase">
+              {email[0]}
             </div>
-            <p className="truncate text-xs text-muted-foreground" title={email}>
+            <p
+              className="min-w-0 flex-1 truncate text-xs text-muted-foreground"
+              title={email}
+            >
               {email}
             </p>
             <Button
-              variant="outline"
-              size="sm"
-              className="w-full"
+              variant="ghost"
+              size="icon-sm"
               disabled={signOut.isPending}
               onClick={() => signOut.mutate()}
+              aria-label="Sign out"
+              title="Sign out"
             >
               <LogOut className="size-4" />
-              Sign out
             </Button>
-          </>
+          </div>
         ) : (
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex justify-center">
             <Button
               variant="outline"
               size="icon-sm"

@@ -39,7 +39,8 @@ export function PermitsPage() {
       {
         accessorKey: "createdAt",
         header: "Created",
-        cell: ({ row }) => new Date(row.original.createdAt).toLocaleString(),
+        cell: ({ row }) =>
+          new Date(row.original.createdAt).toLocaleDateString(),
       },
     ],
     [],
@@ -50,13 +51,14 @@ export function PermitsPage() {
   }
 
   return (
-    <PageFrame>
-      <div className="flex justify-end">
+    <PageFrame
+      actions={
         <Button type="button" onClick={() => setUploadOpen(true)}>
           <Upload className="size-4" />
           New permit
         </Button>
-      </div>
+      }
+    >
       <DataTable
         columns={columns}
         data={permitsQuery.data ?? []}
