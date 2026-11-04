@@ -8,6 +8,7 @@ import { usePermits } from "@/hooks/use-permits";
 import { useNorms } from "@/hooks/use-norms";
 import { useReviews } from "@/hooks/use-reviews";
 import { cn } from "@/lib/utils";
+import { QueryError } from "@/components/ui/query-error";
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
@@ -15,6 +16,12 @@ export function DashboardPage() {
   const permits = usePermits(true);
   const norms = useNorms(true);
   const reviews = useReviews(true);
+  const failed = [
+    { name: "permits", q: permits },
+    { name: "norms", q: norms },
+    { name: "reviews", q: reviews },
+  ].filter((x) => x.q.isError);
+  const hasError = failed.length > 0;
 
   const loading = permits.isLoading || norms.isLoading || reviews.isLoading;
   const nPermits = permits.data?.length ?? 0;
@@ -51,10 +58,19 @@ export function DashboardPage() {
     },
   ];
 
-  const currentIndex = loading ? -1 : steps.findIndex((s) => !s.done);
+  const currentIndex =
+    loading || hasError ? -1 : steps.findIndex((s) => !s.done);
 
   return (
     <PageFrame>
+      {hasError ? (
+        <QueryError
+          message={`Could not load ${failed.map((f) => f.name).join(", ")}.`}
+          onRetry={() => failed.forEach((f) => f.q.refetch())}
+          retrying={failed.some((f) => f.q.isFetching)}
+        />
+      ) : null}
+
       <div className="grid gap-4 md:grid-cols-3">
         {steps.map((s, i) => {
           const current = i === currentIndex;
@@ -80,7 +96,7 @@ export function DashboardPage() {
                   {s.done ? <Check className="size-4" /> : i + 1}
                 </div>
                 <span className="text-xs tabular-nums text-muted-foreground">
-                  {loading ? "…" : s.status}
+                  {loading || hasError ? "–" : s.status}
                 </span>
               </div>
 

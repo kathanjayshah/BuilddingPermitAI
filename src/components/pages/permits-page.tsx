@@ -11,6 +11,7 @@ import { UploadPermitModal } from "@/components/permits/upload-permit-modal";
 import { usePermits } from "@/hooks/use-permits";
 import { labelPermitType } from "@/lib/permit-types";
 import type { PermitRecord } from "@/lib/types";
+import { QueryError } from "@/components/ui/query-error";
 
 export function PermitsPage() {
   const router = useRouter();
@@ -59,14 +60,22 @@ export function PermitsPage() {
         </Button>
       }
     >
-      <DataTable
-        columns={columns}
-        data={permitsQuery.data ?? []}
-        isLoading={permitsQuery.isLoading}
-        emptyMessage="No permits yet. Create a permit and attach a document."
-        getRowId={(row) => row.id}
-        onRowClick={(row) => openPermit(row.id)}
-      />
+      {permitsQuery.isError ? (
+        <QueryError
+          message="Could not load permits."
+          onRetry={() => permitsQuery.refetch()}
+          retrying={permitsQuery.isFetching}
+        />
+      ) : (
+        <DataTable
+          columns={columns}
+          data={permitsQuery.data ?? []}
+          isLoading={permitsQuery.isLoading}
+          emptyMessage="No permits yet. Create a permit and attach a document."
+          getRowId={(row) => row.id}
+          onRowClick={(row) => openPermit(row.id)}
+        />
+      )}
       <UploadPermitModal
         open={uploadOpen}
         onClose={() => setUploadOpen(false)}

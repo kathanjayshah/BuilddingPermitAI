@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { QueryError } from "@/components/ui/query-error";
 import {
   Dialog,
   DialogContent,
@@ -86,13 +87,21 @@ export function NormsPage() {
         </div>
       ) : null}
 
-      <DataTable
-        columns={columns}
-        data={normsQuery.data ?? []}
-        isLoading={normsQuery.isLoading}
-        emptyMessage="No norms yet. Click “Add norm” to paste, upload, or link one."
-        getRowId={(row) => row.id}
-      />
+      {normsQuery.isError ? (
+        <QueryError
+          message="Could not load norms."
+          onRetry={() => normsQuery.refetch()}
+          retrying={normsQuery.isFetching}
+        />
+      ) : (
+        <DataTable
+          columns={columns}
+          data={normsQuery.data ?? []}
+          isLoading={normsQuery.isLoading}
+          emptyMessage="No norms yet. Click “Add norm” to paste, upload, or link one."
+          getRowId={(row) => row.id}
+        />
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-lg">
