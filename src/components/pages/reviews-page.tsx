@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { QueryError } from "@/components/ui/query-error";
 import {
   Dialog,
   DialogContent,
@@ -110,13 +111,21 @@ export function ReviewsPage() {
         </div>
       ) : null}
 
-      <DataTable
-        columns={columns}
-        data={reviewsQuery.data ?? []}
-        isLoading={reviewsQuery.isLoading}
-        emptyMessage="No review runs yet. Click “New review” to start one."
-        getRowId={(row) => row.id}
-      />
+      {reviewsQuery.isError ? (
+        <QueryError
+          message="Could not load reviews."
+          onRetry={() => reviewsQuery.refetch()}
+          retrying={reviewsQuery.isFetching}
+        />
+      ) : (
+        <DataTable
+          columns={columns}
+          data={reviewsQuery.data ?? []}
+          isLoading={reviewsQuery.isLoading}
+          emptyMessage="No review runs yet. Click “New review” to start one."
+          getRowId={(row) => row.id}
+        />
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-lg">
@@ -126,6 +135,20 @@ export function ReviewsPage() {
               Pick a permit and the norms to check it against.
             </DialogDescription>
           </DialogHeader>
+          {permitsQuery.isError ? (
+            <QueryError
+              message="Could not load permits."
+              onRetry={() => permitsQuery.refetch()}
+              retrying={permitsQuery.isFetching}
+            />
+          ) : null}
+          {normsQuery.isError ? (
+            <QueryError
+              message="Could not load norms."
+              onRetry={() => normsQuery.refetch()}
+              retrying={normsQuery.isFetching}
+            />
+          ) : null}
 
           <div className="space-y-4">
             <div className="space-y-2">
