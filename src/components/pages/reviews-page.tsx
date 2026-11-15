@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 import {
   Dialog,
   DialogContent,
@@ -43,19 +44,36 @@ export function ReviewsPage() {
   const permits = permitsQuery.data ?? [];
   const norms = normsQuery.data ?? [];
 
-  const columns = useMemo<ColumnDef<ReviewRun>[]>(() => {
-    const titleById = new Map(
+    const columns = useMemo<ColumnDef<ReviewRun>[]>(() => {
+    const permitTitleById = new Map(
       (permitsQuery.data ?? []).map((p) => [p.id, p.title]),
+    );
+    const normTitleById = new Map(
+      (normsQuery.data ?? []).map((n) => [n.id, n.title]),
     );
     return [
       {
         accessorKey: "permitId",
         header: "Permit",
-        cell: ({ row }) => (
-          <span className="font-medium">
-            {titleById.get(row.original.permitId) ?? row.original.permitId}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const id = row.original.permitId;
+          const title = permitTitleById.get(id);
+          if (title) {
+            return (
+              <Link
+                href={`/permits/${encodeURIComponent(id)}`}
+                className="font-medium underline-offset-4 hover:underline"
+              >
+                {title}
+              </Link>
+            );
+          }
+          return (
+            <span className="text-muted-foreground">
+              {permitsQuery.isLoading ? "…" : "Unknown permit"}
+            </span>
+          );
+        },
       },
       {
         accessorKey: "status",
@@ -65,7 +83,19 @@ export function ReviewsPage() {
       {
         accessorKey: "normIds",
         header: "Norms",
-        cell: ({ row }) => row.original.normIds.length,
+        cell: ({ row }) => {
+          const names = row.original.normIds.map(
+            (id) => normTitleById.get(id) ?? "Unknown norm",
+          );
+          if (names.length === 0) {
+            return <span className="text-muted-foreground">None</span>;
+          }
+          return (
+            <span className="line-clamp-2 text-sm" title={names.join(", ")}>
+              {names.join(", ")}
+            </span>
+          );
+        },
       },
       {
         accessorKey: "createdAt",
@@ -82,7 +112,7 @@ export function ReviewsPage() {
         ),
       },
     ];
-  }, [permitsQuery.data]);
+  }, [permitsQuery.data, permitsQuery.isLoading, normsQuery.data]);
 
   async function runReview() {
     const result = await createReview.mutateAsync({
