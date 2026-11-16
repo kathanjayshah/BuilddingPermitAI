@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { formatDateTime } from "@/lib/format";
 import {
   Dialog,
   DialogContent,
@@ -70,7 +71,7 @@ export function ReviewsPage() {
       {
         accessorKey: "createdAt",
         header: "Created",
-        cell: ({ row }) => new Date(row.original.createdAt).toLocaleString(),
+        cell: ({ row }) => formatDateTime(row.original.createdAt),
       },
       {
         accessorKey: "note",

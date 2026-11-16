@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { formatDateTime } from "@/lib/format";
 import {
   Dialog,
   DialogContent,
@@ -64,8 +65,7 @@ export function NormsPage() {
       {
         accessorKey: "createdAt",
         header: "Created",
-        cell: ({ row }) =>
-          new Date(row.original.createdAt).toLocaleDateString(),
+        cell: ({ row }) => formatDateTime(row.original.createdAt),
       },
     ],
     [],

@@ -11,6 +11,7 @@ import { UploadPermitModal } from "@/components/permits/upload-permit-modal";
 import { usePermits } from "@/hooks/use-permits";
 import { labelPermitType } from "@/lib/permit-types";
 import type { PermitRecord } from "@/lib/types";
+import { formatDateTime } from "@/lib/format";
 
 export function PermitsPage() {
   const router = useRouter();
@@ -39,8 +40,7 @@ export function PermitsPage() {
       {
         accessorKey: "createdAt",
         header: "Created",
-        cell: ({ row }) =>
-          new Date(row.original.createdAt).toLocaleDateString(),
+        cell: ({ row }) => formatDateTime(row.original.createdAt),
       },
     ],
     [],
