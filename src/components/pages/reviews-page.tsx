@@ -11,6 +11,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import {
+  labelReviewStatus,
+  reviewStatusTone,
+  toneBadgeProps,
+} from "@/lib/badge-labels";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -78,7 +83,14 @@ export function ReviewsPage() {
       {
         accessorKey: "status",
         header: "Status",
-        cell: ({ row }) => <Badge>{row.original.status}</Badge>,
+        cell: ({ row }) => {
+          const status = row.original.status;
+          return (
+            <Badge {...toneBadgeProps(reviewStatusTone(status))}>
+              {labelReviewStatus(status)}
+            </Badge>
+          );
+        },     
       },
       {
         accessorKey: "normIds",

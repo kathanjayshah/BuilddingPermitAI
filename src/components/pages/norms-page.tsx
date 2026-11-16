@@ -1,5 +1,6 @@
 "use client";
 
+import { labelNormSource } from "@/lib/badge-labels";
 import { useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
@@ -20,12 +21,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCreateNorm, useNorms, useUploadNorm } from "@/hooks/use-norms";
 import type { NormRecord } from "@/lib/types";
-
-const SOURCE_LABELS: Record<string, string> = {
-  paste: "Pasted",
-  upload: "Uploaded",
-  web_stub: "Web stub",
-};
 
 export function NormsPage() {
   const normsQuery = useNorms(true);
@@ -57,7 +52,7 @@ export function NormsPage() {
         header: "Source",
         cell: ({ row }) => (
           <Badge variant="secondary">
-            {SOURCE_LABELS[row.original.source] ?? row.original.source}
+            {labelNormSource(row.original.source)}
           </Badge>
         ),
       },
