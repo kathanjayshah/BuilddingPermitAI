@@ -64,6 +64,12 @@ export function PermitsPage() {
         data={permitsQuery.data ?? []}
         isLoading={permitsQuery.isLoading}
         emptyMessage="No permits yet. Create a permit and attach a document."
+        emptyAction={
+          <Button type="button" onClick={() => setUploadOpen(true)}>
+            <Upload className="size-4" />
+            New permit
+          </Button>
+        }
         getRowId={(row) => row.id}
         onRowClick={(row) => openPermit(row.id)}
       />

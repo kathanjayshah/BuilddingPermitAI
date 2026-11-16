@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -12,6 +13,7 @@ type DataTableProps<TData> = {
   columns: ColumnDef<TData, unknown>[];
   data: TData[];
   emptyMessage?: string;
+  emptyAction?: ReactNode;
   isLoading?: boolean;
   onRowClick?: (row: TData) => void;
   selectedId?: string | null;
@@ -22,6 +24,7 @@ export function DataTable<TData>({
   columns,
   data,
   emptyMessage = "No rows yet.",
+  emptyAction,
   isLoading = false,
   onRowClick,
   selectedId,
@@ -44,8 +47,9 @@ export function DataTable<TData>({
 
   if (data.length === 0) {
     return (
-      <div className="rounded-lg border px-4 py-8 text-center text-sm text-muted-foreground">
-        {emptyMessage}
+      <div className="flex flex-col items-center gap-3 rounded-lg border px-4 py-8 text-center text-sm text-muted-foreground">
+        <p>{emptyMessage}</p>
+        {emptyAction}
       </div>
     );
   }
