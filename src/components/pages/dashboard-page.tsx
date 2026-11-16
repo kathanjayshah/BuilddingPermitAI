@@ -9,6 +9,7 @@ import { useNorms } from "@/hooks/use-norms";
 import { useReviews } from "@/hooks/use-reviews";
 import { cn } from "@/lib/utils";
 
+
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 export function DashboardPage() {
@@ -52,6 +53,9 @@ export function DashboardPage() {
   ];
 
   const currentIndex = loading ? -1 : steps.findIndex((s) => !s.done);
+  const hasError = permits.isError || norms.isError || reviews.isError;
+  const showEmptyHint =
+    !loading && !hasError && nPermits === 0 && nNorms === 0 && nReviews === 0;
 
   return (
     <PageFrame>
@@ -112,6 +116,16 @@ export function DashboardPage() {
           );
         })}
       </div>
+      {showEmptyHint ? (
+        <p className="text-sm">
+          <Link
+            href="/permits"
+            className="font-medium underline underline-offset-4"
+          >
+            Create a permit to start.
+          </Link>
+        </p>
+      ) : null}
     </PageFrame>
   );
 }
