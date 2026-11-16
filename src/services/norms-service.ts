@@ -25,4 +25,8 @@ export const normsService = {
       body: form,
     });
   },
+  remove: (id: string) =>
+    apiJson<{ ok: true }>(`/api/norms?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    }),
 };

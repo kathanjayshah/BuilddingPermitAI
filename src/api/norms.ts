@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSessionEmail } from "@/lib/session";
-import { addNorm, createId, listNorms } from "@/lib/mock/store";
+import { addNorm, createId, listNorms, deleteNorm } from "@/lib/mock/store";
 import type { NormSource } from "@/lib/types";
+
 
 export async function GET() {
   const email = await getSessionEmail();
@@ -73,6 +74,24 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json({ norm }, { status: 201 });
+}
+
+export async function DELETE(request: Request) {
+  const email = await getSessionEmail();
+  if (!email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const id = new URL(request.url).searchParams.get("id")?.trim() ?? "";
+  if (!id) {
+    return NextResponse.json({ error: "Missing id." }, { status: 400 });
+  }
+
+  if (!deleteNorm(email, id)) {
+    return NextResponse.json({ error: "Norm not found." }, { status: 404 });
+  }
+
+  return NextResponse.json({ ok: true });
 }
 
 async function handleUpload(email: string, form: FormData) {

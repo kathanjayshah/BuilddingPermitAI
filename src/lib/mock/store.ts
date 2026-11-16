@@ -90,6 +90,14 @@ export function addNorm(norm: NormRecord): NormRecord {
   return norm;
 }
 
+export function deleteNorm(email: string, id: string): boolean {
+  const store = getStore();
+  const index = store.norms.findIndex((n) => n.email === email && n.id === id);
+  if (index === -1) return false;
+  store.norms.splice(index, 1);
+  return true;
+}
+
 export function getNormsByIds(email: string, ids: string[]): NormRecord[] {
   const idSet = new Set(ids);
   return getStore().norms.filter((n) => n.email === email && idSet.has(n.id));

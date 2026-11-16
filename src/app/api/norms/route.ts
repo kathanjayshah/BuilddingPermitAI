@@ -1,1 +1,1 @@
-export { GET, POST } from "@/api/norms";
+export { GET, POST, DELETE } from "@/api/norms";
