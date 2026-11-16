@@ -11,11 +11,21 @@ import { UploadPermitModal } from "@/components/permits/upload-permit-modal";
 import { usePermits } from "@/hooks/use-permits";
 import { labelPermitType } from "@/lib/permit-types";
 import type { PermitRecord } from "@/lib/types";
+import { Input } from "@/components/ui/input";
 
 export function PermitsPage() {
   const router = useRouter();
   const permitsQuery = usePermits(true);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const permits = permitsQuery.data;
+  const filteredPermits = useMemo(() => {
+    const list = permits ?? [];
+    const q = search.trim().toLowerCase();
+    return q ? list.filter((p) => p.title.toLowerCase().includes(q)) : list;
+  }, [permits, search]);
+  const listIsEmpty = (permits?.length ?? 0) === 0;
 
   const columns = useMemo<ColumnDef<PermitRecord>[]>(
     () => [
@@ -59,14 +69,27 @@ export function PermitsPage() {
         </Button>
       }
     >
-      <DataTable
-        columns={columns}
-        data={permitsQuery.data ?? []}
-        isLoading={permitsQuery.isLoading}
-        emptyMessage="No permits yet. Create a permit and attach a document."
-        getRowId={(row) => row.id}
-        onRowClick={(row) => openPermit(row.id)}
-      />
+            <div className="space-y-3">
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search permits by title…"
+          aria-label="Search permits by title"
+          className="max-w-sm"
+        />
+        <DataTable
+          columns={columns}
+          data={filteredPermits}
+          isLoading={permitsQuery.isLoading}
+          emptyMessage={
+            listIsEmpty
+              ? "No permits yet. Create a permit and attach a document."
+              : "No matches."
+          }
+          getRowId={(row) => row.id}
+          onRowClick={(row) => openPermit(row.id)}
+        />
+      </div>
       <UploadPermitModal
         open={uploadOpen}
         onClose={() => setUploadOpen(false)}

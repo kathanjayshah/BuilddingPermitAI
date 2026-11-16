@@ -37,7 +37,15 @@ export function NormsPage() {
   const [webTitle, setWebTitle] = useState("");
   const [webUrl, setWebUrl] = useState("");
   const [message, setMessage] = useState<string | null>(null);
-
+  const [search, setSearch] = useState("");
+  const norms = normsQuery.data;
+  const filteredNorms = useMemo(() => {
+    const list = norms ?? [];
+    const q = search.trim().toLowerCase();
+    return q ? list.filter((n) => n.title.toLowerCase().includes(q)) : list;
+  }, [norms, search]);
+  const listIsEmpty = (norms?.length ?? 0) === 0;
+  
   const columns = useMemo<ColumnDef<NormRecord>[]>(
     () => [
       {
@@ -86,13 +94,22 @@ export function NormsPage() {
         </div>
       ) : null}
 
-      <DataTable
-        columns={columns}
-        data={normsQuery.data ?? []}
-        isLoading={normsQuery.isLoading}
-        emptyMessage="No norms yet. Click “Add norm” to paste, upload, or link one."
-        getRowId={(row) => row.id}
-      />
+<div className="space-y-3">
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search norms by title…"
+          aria-label="Search norms by title"
+          className="max-w-sm"
+        />
+        <DataTable
+          columns={columns}
+          data={filteredNorms}
+          isLoading={normsQuery.isLoading}
+          emptyMessage="No norms yet. Click “Add norm” to paste, upload, or link one."
+          getRowId={(row) => row.id}
+        />
+      </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-lg">
