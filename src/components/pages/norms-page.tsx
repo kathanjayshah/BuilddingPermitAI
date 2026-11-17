@@ -37,6 +37,7 @@ export function NormsPage() {
   const [webTitle, setWebTitle] = useState("");
   const [webUrl, setWebUrl] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const [selected, setSelected] = useState<NormRecord | null>(null);
 
   const columns = useMemo<ColumnDef<NormRecord>[]>(
     () => [
@@ -92,10 +93,11 @@ export function NormsPage() {
         isLoading={normsQuery.isLoading}
         emptyMessage="No norms yet. Click “Add norm” to paste, upload, or link one."
         getRowId={(row) => row.id}
+        onRowClick={(row) => setSelected(row)}
       />
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Add city norm</DialogTitle>
             <DialogDescription>
@@ -143,6 +145,7 @@ export function NormsPage() {
                     onChange={(e) => setNormContent(e.target.value)}
                     rows={6}
                     required
+                    className="max-h-60 overflow-y-auto"
                   />
                 </div>
                 <Button type="submit" disabled={createNorm.isPending}>
@@ -214,6 +217,42 @@ export function NormsPage() {
               </form>
             </TabsContent>
           </Tabs>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={selected !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setSelected(null);
+        }}
+      >
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{selected?.title}</DialogTitle>
+            <DialogDescription>
+              {selected
+                ? `${SOURCE_LABELS[selected.source] ?? selected.source} · ${new Date(selected.createdAt).toLocaleString()}`
+                : ""}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selected?.sourceUrl && /^https?:\/\//i.test(selected.sourceUrl) ? (
+            <a
+              href={selected.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm break-all underline underline-offset-4"
+            >
+              {selected.sourceUrl}
+            </a>
+          ) : null}
+
+          <div className="max-h-[50vh] overflow-y-auto rounded-md border bg-muted/30 p-3 text-sm break-words whitespace-pre-wrap">
+            {selected?.content ? (
+              selected.content
+            ) : (
+              <span className="text-muted-foreground">No text content.</span>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </PageFrame>
