@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { PageFrame } from "@/components/layout/page-frame";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +19,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCreateNorm, useNorms, useUploadNorm } from "@/hooks/use-norms";
+import { useCreateNorm, useNorms, useUploadNorm, useDeleteNorm} from "@/hooks/use-norms";
 import type { NormRecord } from "@/lib/types";
 
 const SOURCE_LABELS: Record<string, string> = {
@@ -31,12 +32,19 @@ export function NormsPage() {
   const normsQuery = useNorms(true);
   const createNorm = useCreateNorm();
   const uploadNorm = useUploadNorm();
+  const deleteNorm = useDeleteNorm();
+    const [toDelete, setToDelete] = useState<NormRecord | null>(null);
   const [open, setOpen] = useState(false);
   const [normTitle, setNormTitle] = useState("");
   const [normContent, setNormContent] = useState("");
   const [webTitle, setWebTitle] = useState("");
   const [webUrl, setWebUrl] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+
+  function closeDeleteDialog() {
+    setToDelete(null);
+    deleteNorm.reset();
+  }
 
   const columns = useMemo<ColumnDef<NormRecord>[]>(
     () => [
@@ -66,6 +74,24 @@ export function NormsPage() {
         header: "Created",
         cell: ({ row }) =>
           new Date(row.original.createdAt).toLocaleDateString(),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`Delete ${row.original.title}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setToDelete(row.original);
+            }}
+          >
+            <Trash2 className="size-4 text-muted-foreground" />
+          </Button>
+        ),
       },
     ],
     [],
@@ -216,6 +242,18 @@ export function NormsPage() {
           </Tabs>
         </DialogContent>
       </Dialog>
+      <ConfirmDeleteDialog
+        open={toDelete !== null}
+        title="Delete norm?"
+        description={`“${toDelete?.title ?? ""}” will be permanently removed. This can’t be undone.`}
+        isPending={deleteNorm.isPending}
+        error={deleteNorm.error}
+        onCancel={closeDeleteDialog}
+        onConfirm={() => {
+          if (!toDelete) return;
+          deleteNorm.mutate(toDelete.id, { onSuccess: closeDeleteDialog });
+        }}
+      />
     </PageFrame>
   );
 }

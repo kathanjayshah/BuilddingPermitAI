@@ -38,3 +38,13 @@ export function useUploadNorm() {
     },
   });
 }
+
+export function useDeleteNorm() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => normsService.remove(id),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.norms });
+    },
+  });
+}
